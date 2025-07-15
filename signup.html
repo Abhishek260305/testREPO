@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign Up - NetFlixX</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <nav class="navbar">
+    <div class="logo"><a href="index.html" style="color:#e50914; text-decoration:none;">NetFlixX</a></div>
+  </nav>
+  <section class="section login-section">
+    <h2>Sign Up</h2>
+    <form class="auth-form" id="signupForm">
+      <input type="email" placeholder="Email" id="signupEmail" required>
+      <input type="password" placeholder="Password" id="signupPassword" required>
+      <button type="submit" class="btn-auth">Sign Up</button>
+      <p class="signup-link">Already have an account? <a href="index.html#login-signup">Login</a></p>
+    </form>
+  </section>
+  <footer class="footer">
+    <p>&copy; 2024 NetFlixX. All rights reserved.</p>
+  </footer>
+  <script>
+    // Signup logic
+    const signupForm = document.getElementById('signupForm');
+    if (signupForm) {
+      signupForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const email = document.getElementById('signupEmail').value;
+        const password = document.getElementById('signupPassword').value;
+        sessionStorage.setItem('signupEmail', email);
+        sessionStorage.setItem('signupPassword', password);
+        alert('Signup successful! Please login.');
+        window.location.href = 'index.html#login-signup';
+      });
+    }
+  </script>
+</body>
+</html> 

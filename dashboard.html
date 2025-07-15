@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NetFlixX</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      background: #141414;
+      margin: 0;
+      font-family: 'Roboto', Arial, sans-serif;
+      color: #fff;
+    }
+    .dashboard-container {
+      max-width: 1300px;
+      margin: 0 auto;
+      padding: 2rem 2vw;
+    }
+    .dashboard-title {
+      color: #e50914;
+      font-size: 2.8rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    .filter-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: center;
+      margin-bottom: 2.5rem;
+    }
+    .filter-btn {
+      background: #232323;
+      color: #fff;
+      border: 2px solid #e50914;
+      border-radius: 20px;
+      padding: 0.5rem 1.5rem;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+    }
+    .filter-btn.active, .filter-btn:hover {
+      background: #e50914;
+      color: #fff;
+    }
+    .movies-rows {
+      display: flex;
+      flex-direction: column;
+      gap: 2.5rem;
+    }
+    .movies-row {
+      display: flex;
+      gap: 2.5rem;
+      border-bottom: 3px solid #232323;
+      padding-bottom: 2.5rem;
+      margin-bottom: 0.5rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .movie-card {
+      background: #232323;
+      border-radius: 12px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+      padding: 1.5rem 1.2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transition: transform 0.2s;
+      min-width: 260px;
+      max-width: 300px;
+      width: 100%;
+      flex: 1 1 22%;
+      box-sizing: border-box;
+    }
+    .movie-card:hover {
+      transform: translateY(-8px) scale(1.04);
+    }
+    .movie-img {
+      width: 220px;
+      height: 320px;
+      background: #181818;
+      border-radius: 8px;
+      margin-bottom: 1.2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #555;
+      font-size: 1.3rem;
+      font-style: italic;
+    }
+    .movie-title {
+      font-size: 1.3rem;
+      font-weight: 700;
+      margin-bottom: 0.8rem;
+      color: #fff;
+      text-align: center;
+    }
+    .movie-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      justify-content: center;
+    }
+    .tag {
+      background: #e50914;
+      color: #fff;
+      border-radius: 3px;
+      padding: 0.2rem 0.7rem;
+      font-size: 0.95rem;
+      font-weight: 500;
+      margin-bottom: 0.2rem;
+    }
+    @media (max-width: 1200px) {
+      .movie-card {
+        min-width: 200px;
+        max-width: 250px;
+      }
+      .movie-img {
+        width: 160px;
+        height: 220px;
+      }
+    }
+    @media (max-width: 900px) {
+      .movie-img {
+        width: 120px;
+        height: 160px;
+      }
+      .movie-card {
+        min-width: 120px;
+        max-width: 160px;
+      }
+    }
+    @media (max-width: 600px) {
+      .movies-row {
+        flex-direction: column;
+        align-items: center;
+      }
+      .movie-card {
+        min-width: 90vw;
+        max-width: 95vw;
+      }
+      .movie-img {
+        width: 90vw;
+        height: 180px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="dashboard-container">
+    <div class="dashboard-title"><a href="index.html" style="color:#e50914; text-decoration:none;">NetFlixX</a></div>
+    <div class="filter-bar" id="filterBar"></div>
+    <div class="movies-rows" id="moviesRows"></div>
+  </div>
+  <script>
+    // Movie data with real movie names and tags
+    const movies = [
+      { title: 'Inception', tags: ['Sci-Fi', 'Action'] },
+      { title: 'The Dark Knight', tags: ['Action', 'Thriller'] },
+      { title: 'Interstellar', tags: ['Sci-Fi', 'Adventure'] },
+      { title: 'The Martian', tags: ['Sci-Fi', 'Motivation'] },
+      { title: 'Avengers: Endgame', tags: ['Action', 'Adventure'] },
+      { title: 'The Lord of the Rings', tags: ['Adventure', 'Motivation'] },
+      { title: 'The Pursuit of Happyness', tags: ['Motivation', 'Drama'] },
+      { title: 'Jurassic Park', tags: ['Adventure', 'Sci-Fi'] },
+      { title: 'Gladiator', tags: ['Action', 'Drama'] },
+      { title: 'The Lion King', tags: ['Family', 'Motivation'] },
+      { title: 'Star Wars: A New Hope', tags: ['Sci-Fi', 'Adventure'] },
+      { title: 'Forrest Gump', tags: ['Drama', 'Motivation'] },
+      { title: 'Mad Max: Fury Road', tags: ['Action', 'Adventure'] },
+      { title: 'The Incredibles', tags: ['Family', 'Action'] },
+      { title: 'The Matrix', tags: ['Sci-Fi', 'Action'] },
+      { title: 'Finding Nemo', tags: ['Family', 'Adventure'] },
+      { title: 'Rocky', tags: ['Motivation', 'Drama'] },
+      { title: 'Mission: Impossible', tags: ['Action', 'Thriller'] },
+      { title: 'Guardians of the Galaxy', tags: ['Adventure', 'Sci-Fi'] },
+      { title: 'Life of Pi', tags: ['Adventure', 'Motivation'] },
+    ];
+
+    // Get all unique tags
+    const allTags = Array.from(new Set(movies.flatMap(m => m.tags)));
+    let activeTag = 'All';
+
+    // Render filter bar
+    function renderFilterBar() {
+      const filterBar = document.getElementById('filterBar');
+      filterBar.innerHTML = '';
+      const allBtn = document.createElement('button');
+      allBtn.textContent = 'All';
+      allBtn.className = 'filter-btn' + (activeTag === 'All' ? ' active' : '');
+      allBtn.onclick = () => { activeTag = 'All'; renderMovies(); renderFilterBar(); };
+      filterBar.appendChild(allBtn);
+      allTags.forEach(tag => {
+        const btn = document.createElement('button');
+        btn.textContent = tag;
+        btn.className = 'filter-btn' + (activeTag === tag ? ' active' : '');
+        btn.onclick = () => { activeTag = tag; renderMovies(); renderFilterBar(); };
+        filterBar.appendChild(btn);
+      });
+    }
+
+    // Render movies in rows of 4
+    function renderMovies() {
+      const moviesRows = document.getElementById('moviesRows');
+      moviesRows.innerHTML = '';
+      let filtered = activeTag === 'All' ? movies : movies.filter(m => m.tags.includes(activeTag));
+      for (let i = 0; i < filtered.length; i += 4) {
+        const row = document.createElement('div');
+        row.className = 'movies-row';
+        filtered.slice(i, i + 4).forEach(movie => {
+          const card = document.createElement('div');
+          card.className = 'movie-card';
+          card.innerHTML = `
+            <div class="movie-img">Image</div>
+            <div class="movie-title">${movie.title}</div>
+            <div class="movie-tags">${movie.tags.map(tag => `<span class='tag'>${tag}</span>`).join(' ')}</div>
+          `;
+          row.appendChild(card);
+        });
+        moviesRows.appendChild(row);
+      }
+    }
+
+    renderFilterBar();
+    renderMovies();
+  </script>
+</body>
+</html> 

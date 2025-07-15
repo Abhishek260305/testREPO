@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Netflix Landing Page</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <nav class="navbar">
+    <div class="logo">NetFlixX</div>
+    <ul class="nav-links">
+      <li><a href="#features">Features</a></li>
+      <li><a href="#why">Why to Use</a></li>
+      <li><a href="#pricing">Pricing</a></li>
+    </ul>
+    <a href="#login-signup" class="btn-login">Login / Signup</a>
+  </nav>
+
+  <header class="hero">
+    <h1>Unlimited movies, TV shows, and more.</h1>
+    <p>Watch anywhere. Cancel anytime.</p>
+    <a href="#login-signup" class="btn-cta">Get Started</a>
+  </header>
+
+  <section id="features" class="section">
+    <h2>Features</h2>
+    <div class="features-list">
+      <div class="feature-item">
+        <h3>Vast Library</h3>
+        <p>Thousands of movies and TV shows at your fingertips.</p>
+      </div>
+      <div class="feature-item">
+        <h3>Watch Anywhere</h3>
+        <p>Stream on your phone, tablet, laptop, and TV.</p>
+      </div>
+      <div class="feature-item">
+        <h3>No Ads</h3>
+        <p>Enjoy uninterrupted viewing with no commercials.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="why" class="section dark-section">
+    <h2>Why Use NetFlixX?</h2>
+    <ul class="why-list">
+      <li>Personalized recommendations</li>
+      <li>Flexible subscription plans</li>
+      <li>High-quality streaming</li>
+      <li>Family-friendly content</li>
+    </ul>
+  </section>
+
+  <section id="pricing" class="section">
+    <h2>Pricing</h2>
+    <div class="pricing-cards">
+      <div class="card">
+        <h3>Basic</h3>
+        <p class="price">$8.99/mo</p>
+        <ul>
+          <li>SD Quality</li>
+          <li>1 Screen</li>
+        </ul>
+        <a href="#login-signup" class="btn-card">Choose</a>
+      </div>
+      <div class="card highlighted">
+        <h3>Standard</h3>
+        <p class="price">$13.99/mo</p>
+        <ul>
+          <li>HD Quality</li>
+          <li>2 Screens</li>
+        </ul>
+        <a href="#login-signup" class="btn-card">Choose</a>
+      </div>
+      <div class="card">
+        <h3>Premium</h3>
+        <p class="price">$17.99/mo</p>
+        <ul>
+          <li>Ultra HD</li>
+          <li>4 Screens</li>
+        </ul>
+        <a href="#login-signup" class="btn-card">Choose</a>
+      </div>
+    </div>
+  </section>
+
+  <section id="login-signup" class="section login-section">
+    <h2>Login / Signup</h2>
+    <form class="auth-form" id="loginForm">
+      <input type="email" placeholder="Email" id="loginEmail" required>
+      <input type="password" placeholder="Password" id="loginPassword" required>
+      <button type="submit" class="btn-auth">Login</button>
+      <p class="signup-link">New here? <a href="signup.html" id="signupLink">Sign up now</a></p>
+    </form>
+  </section>
+
+  <footer class="footer">
+    <p>&copy; 2024 NetFlixX. All rights reserved.</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
