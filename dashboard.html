@@ -193,13 +193,13 @@
       const allBtn = document.createElement('button');
       allBtn.textContent = 'All';
       allBtn.className = 'filter-btn' + (activeTag === 'All' ? ' active' : '');
-      allBtn.onclick = () => { activeTag = 'All'; renderMovies(); renderFilterBar(); };
+      allBtn.onclick = () => { activeTag = 'All'; renderMovies(); renderFilterBar(); history.replaceState(null, '', '#All'); };
       filterBar.appendChild(allBtn);
       allTags.forEach(tag => {
         const btn = document.createElement('button');
         btn.textContent = tag;
         btn.className = 'filter-btn' + (activeTag === tag ? ' active' : '');
-        btn.onclick = () => { activeTag = tag; renderMovies(); renderFilterBar(); };
+        btn.onclick = () => { activeTag = tag; renderMovies(); renderFilterBar(); history.replaceState(null, '', `#${encodeURIComponent(tag)}`); };
         filterBar.appendChild(btn);
       });
     }
@@ -215,11 +215,15 @@
         filtered.slice(i, i + 4).forEach(movie => {
           const card = document.createElement('div');
           card.className = 'movie-card';
+          card.setAttribute('data-title', movie.title);
           card.innerHTML = `
             <div class="movie-img">Image</div>
             <div class="movie-title">${movie.title}</div>
             <div class="movie-tags">${movie.tags.map(tag => `<span class='tag'>${tag}</span>`).join(' ')}</div>
           `;
+          card.addEventListener('click', function() {
+            window.location.href = `player.html?title=${encodeURIComponent(movie.title)}`;
+          });
           row.appendChild(card);
         });
         moviesRows.appendChild(row);

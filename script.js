@@ -15,9 +15,14 @@ const sections = document.querySelectorAll('section');
 const navItems = document.querySelectorAll('.nav-links a');
 window.addEventListener('scroll', () => {
   let current = '';
+  let minDistance = Infinity;
+  const viewportMiddle = window.innerHeight / 2;
   sections.forEach(section => {
-    const sectionTop = section.offsetTop - 80;
-    if (pageYOffset >= sectionTop) {
+    const rect = section.getBoundingClientRect();
+    const sectionMiddle = rect.top + rect.height / 2;
+    const distance = Math.abs(sectionMiddle - viewportMiddle);
+    if (distance < minDistance) {
+      minDistance = distance;
       current = section.getAttribute('id');
     }
   });
@@ -27,6 +32,12 @@ window.addEventListener('scroll', () => {
       link.classList.add('active');
     }
   });
+  // Update URL fragment for all main sections
+  if (current) {
+    if (window.location.hash !== `#${current}`) {
+      history.replaceState(null, '', `#${current}`);
+    }
+  }
 });
 
 // Optional: Add 'active' class styling in CSS for .nav-links a.active
