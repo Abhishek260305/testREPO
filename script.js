@@ -6,6 +6,9 @@ window.addEventListener('load', () => {
       event_label: window.location.pathname
     });
   }
+  if (typeof amplitude !== 'undefined') {
+    amplitude.logEvent('page_loaded', { page: window.location.pathname });
+  }
 });
 
 // ---------- Smooth scroll for nav links and login/signup button ----------
@@ -25,6 +28,9 @@ navLinks.forEach(link => {
             event_category: 'Navigation',
             event_label: href
           });
+        }
+        if (typeof amplitude !== 'undefined') {
+          amplitude.logEvent('section_navigation', { section: href });
         }
       }
     }
@@ -67,8 +73,11 @@ window.addEventListener('scroll', () => {
         event_category: 'Scroll',
         event_label: current
       });
-      lastTrackedSection = current;
     }
+    if (typeof amplitude !== 'undefined' && lastTrackedSection !== current) {
+      amplitude.logEvent('section_viewed', { section: current });
+    }
+    lastTrackedSection = current;
   }
 });
 
@@ -90,6 +99,9 @@ if (loginForm) {
           event_label: email
         });
       }
+      if (typeof amplitude !== 'undefined') {
+        amplitude.logEvent('login_success', { email });
+      }
       window.location.href = 'dashboard.html';
     } else {
       // Track login failure
@@ -98,6 +110,9 @@ if (loginForm) {
           event_category: 'Authentication',
           event_label: email
         });
+      }
+      if (typeof amplitude !== 'undefined') {
+        amplitude.logEvent('login_failed', { email });
       }
       alert('Invalid credentials. Please try again or sign up.');
     }
@@ -113,6 +128,9 @@ document.querySelectorAll('.btn-like').forEach(btn =>
         event_label: 'Like Clicked'
       });
     }
+    if (typeof amplitude !== 'undefined') {
+      amplitude.logEvent('video_like', { label: 'Like Clicked' });
+    }
   })
 );
 
@@ -123,6 +141,9 @@ document.querySelectorAll('.btn-dislike').forEach(btn =>
         event_category: 'Video',
         event_label: 'Dislike Clicked'
       });
+    }
+    if (typeof amplitude !== 'undefined') {
+      amplitude.logEvent('video_dislike', { label: 'Dislike Clicked' });
     }
   })
 );
@@ -135,6 +156,9 @@ document.querySelectorAll('.btn-play').forEach(btn =>
         event_label: 'Play Clicked'
       });
     }
+    if (typeof amplitude !== 'undefined') {
+      amplitude.logEvent('video_play', { label: 'Play Clicked' });
+    }
   })
 );
 
@@ -145,6 +169,9 @@ document.querySelectorAll('.btn-pause').forEach(btn =>
         event_category: 'Video',
         event_label: 'Pause Clicked'
       });
+    }
+    if (typeof amplitude !== 'undefined') {
+      amplitude.logEvent('video_pause', { label: 'Pause Clicked' });
     }
   })
 );
