@@ -6,6 +6,14 @@
   <title>NetFlixX</title>
   <link rel="stylesheet" href="style.css">
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-FDBB7C75FV"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-FDBB7C75FV');
+  </script>
   <style>
     body {
       background: #141414;
@@ -222,6 +230,7 @@
             <div class="movie-tags">${movie.tags.map(tag => `<span class='tag'>${tag}</span>`).join(' ')}</div>
           `;
           card.addEventListener('click', function() {
+            trackMovieClick(movie.title);
             window.location.href = `player.html?title=${encodeURIComponent(movie.title)}`;
           });
           row.appendChild(card);
@@ -232,6 +241,36 @@
 
     renderFilterBar();
     renderMovies();
+
+    // Track page load
+    if (typeof gtag === 'function') {
+      gtag('event', 'page_loaded', {
+        event_category: 'Page',
+        event_label: window.location.pathname
+      });
+    }
+    // Track filter clicks
+    document.addEventListener('DOMContentLoaded', function() {
+      document.getElementById('filterBar').addEventListener('click', function(e) {
+        if (e.target.classList.contains('filter-btn')) {
+          if (typeof gtag === 'function') {
+            gtag('event', 'filter_click', {
+              event_category: 'Filter',
+              event_label: e.target.textContent
+            });
+          }
+        }
+      });
+    });
+    // Track movie card clicks
+    function trackMovieClick(title) {
+      if (typeof gtag === 'function') {
+        gtag('event', 'movie_click', {
+          event_category: 'Movie',
+          event_label: title
+        });
+      }
+    }
   </script>
 </body>
 </html> 

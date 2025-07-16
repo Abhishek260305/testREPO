@@ -6,6 +6,14 @@
   <title>NetFlixX Player</title>
   <link rel="stylesheet" href="style.css">
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-FDBB7C75FV"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-FDBB7C75FV');
+  </script>
   <style>
     body {
       background: #141414;
@@ -120,33 +128,68 @@
       const sec = String(timer % 60).padStart(2, '0');
       timerDisplay.textContent = `${min}:${sec}`;
     }
+    // Track page load
+    if (typeof gtag === 'function') {
+      gtag('event', 'page_loaded', {
+        event_category: 'Page',
+        event_label: window.location.pathname
+      });
+    }
+    // Track play
     document.getElementById('playBtn').onclick = function() {
       if (!interval) {
         interval = setInterval(() => {
           timer++;
           updateTimer();
         }, 1000);
+        if (typeof gtag === 'function') {
+          gtag('event', 'video_play', {
+            event_category: 'Video',
+            event_label: title
+          });
+        }
       }
     };
+    // Track pause
     document.getElementById('pauseBtn').onclick = function() {
       if (interval) {
         clearInterval(interval);
         interval = null;
+        if (typeof gtag === 'function') {
+          gtag('event', 'video_pause', {
+            event_category: 'Video',
+            event_label: title,
+            event_value: timer
+          });
+        }
       }
     };
     // Like/Dislike logic
     const likeBtn = document.getElementById('likeBtn');
     const dislikeBtn = document.getElementById('dislikeBtn');
+    // Track like/dislike
     likeBtn.onclick = function() {
       likeBtn.classList.toggle('active');
       if (likeBtn.classList.contains('active')) {
         dislikeBtn.classList.remove('active');
+        if (typeof gtag === 'function') {
+          gtag('event', 'video_like', {
+            event_category: 'Video',
+            event_label: title
+          });
+        }
       }
     };
     dislikeBtn.onclick = function() {
       dislikeBtn.classList.toggle('active');
       if (dislikeBtn.classList.contains('active')) {
         likeBtn.classList.remove('active');
+        if (typeof gtag === 'function') {
+          gtag('event', 'video_dislike', {
+            event_category: 'Video',
+            event_label: title
+          });
+        }
       }
     };
   </script>
