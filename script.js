@@ -9,6 +9,9 @@ window.addEventListener('load', () => {
   if (typeof amplitude !== 'undefined') {
     amplitude.logEvent('page_loaded', { page: window.location.pathname });
   }
+  if (typeof mixpanel !== 'undefined') {
+    mixpanel.track('page_loaded', { page: window.location.pathname });
+  }
 });
 
 // ---------- Smooth scroll for nav links and login/signup button ----------
@@ -31,6 +34,9 @@ navLinks.forEach(link => {
         }
         if (typeof amplitude !== 'undefined') {
           amplitude.logEvent('section_navigation', { section: href });
+        }
+        if (typeof mixpanel !== 'undefined') {
+          mixpanel.track('section_navigation', { section: href });
         }
       }
     }
@@ -77,6 +83,9 @@ window.addEventListener('scroll', () => {
     if (typeof amplitude !== 'undefined' && lastTrackedSection !== current) {
       amplitude.logEvent('section_viewed', { section: current });
     }
+    if (typeof mixpanel !== 'undefined' && lastTrackedSection !== current) {
+      mixpanel.track('section_viewed', { section: current });
+    }
     lastTrackedSection = current;
   }
 });
@@ -102,6 +111,9 @@ if (loginForm) {
       if (typeof amplitude !== 'undefined') {
         amplitude.logEvent('login_success', { email });
       }
+      if (typeof mixpanel !== 'undefined') {
+        mixpanel.track('login_success', { email });
+      }
       window.location.href = 'dashboard.html';
     } else {
       // Track login failure
@@ -113,6 +125,9 @@ if (loginForm) {
       }
       if (typeof amplitude !== 'undefined') {
         amplitude.logEvent('login_failed', { email });
+      }
+      if (typeof mixpanel !== 'undefined') {
+        mixpanel.track('login_failed', { email });
       }
       alert('Invalid credentials. Please try again or sign up.');
     }
@@ -131,6 +146,9 @@ document.querySelectorAll('.btn-like').forEach(btn =>
     if (typeof amplitude !== 'undefined') {
       amplitude.logEvent('video_like', { label: 'Like Clicked' });
     }
+    if (typeof mixpanel !== 'undefined') {
+      mixpanel.track('video_like', { label: 'Like Clicked' });
+    }
   })
 );
 
@@ -144,6 +162,9 @@ document.querySelectorAll('.btn-dislike').forEach(btn =>
     }
     if (typeof amplitude !== 'undefined') {
       amplitude.logEvent('video_dislike', { label: 'Dislike Clicked' });
+    }
+    if (typeof mixpanel !== 'undefined') {
+      mixpanel.track('video_dislike', { label: 'Dislike Clicked' });
     }
   })
 );
@@ -159,6 +180,9 @@ document.querySelectorAll('.btn-play').forEach(btn =>
     if (typeof amplitude !== 'undefined') {
       amplitude.logEvent('video_play', { label: 'Play Clicked' });
     }
+    if (typeof mixpanel !== 'undefined') {
+      mixpanel.track('video_play', { label: 'Play Clicked' });
+    }
   })
 );
 
@@ -172,6 +196,9 @@ document.querySelectorAll('.btn-pause').forEach(btn =>
     }
     if (typeof amplitude !== 'undefined') {
       amplitude.logEvent('video_pause', { label: 'Pause Clicked' });
+    }
+    if (typeof mixpanel !== 'undefined') {
+      mixpanel.track('video_pause', { label: 'Pause Clicked' });
     }
   })
 );
