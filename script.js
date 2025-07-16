@@ -229,3 +229,48 @@ document.querySelectorAll('.btn-pause').forEach(btn =>
     }
   })
 );
+
+let sectionStartTime = {};
+let currentSection = null;
+
+window.addEventListener('scroll', () => {
+  let minDistance = Infinity;
+  let newSection = '';
+  const viewportMiddle = window.innerHeight / 2;
+  document.querySelectorAll('section').forEach(section => {
+    const rect = section.getBoundingClientRect();
+    const sectionMiddle = rect.top + rect.height / 2;
+    const distance = Math.abs(sectionMiddle - viewportMiddle);
+    if (distance < minDistance) {
+      minDistance = distance;
+      newSection = section.getAttribute('id');
+    }
+  });
+
+  if (newSection !== currentSection) {
+    // End previous section
+    if (currentSection && sectionStartTime[currentSection]) {
+      const duration = Date.now() - sectionStartTime[currentSection];
+      if (typeof mixpanel !== 'undefined') {
+        mixpanel.track('section_time_spent', { section: currentSection, duration_ms: duration });
+      }
+      if (typeof amplitude !== 'undefined') {
+        amplitude.logEvent('section_time_spent', { section: currentSection, duration_ms: duration });
+      }
+    }
+    // Start new section
+    sectionStartTime[newSection] = Date.now();
+    currentSection = newSection;
+  }
+});
+
+let sessionStart = Date.now();
+window.addEventListener('beforeunload', () => {
+  const duration = Date.now() - sessionStart;
+  if (typeof mixpanel !== 'undefined') {
+    mixpanel.track('session_end', { duration_ms: duration });
+  }
+  if (typeof amplitude !== 'undefined') {
+    amplitude.logEvent('session_end', { duration_ms: duration });
+  }
+});
