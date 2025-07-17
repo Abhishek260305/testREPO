@@ -123,6 +123,62 @@
     <p>&copy; 2024 NetFlixX. All rights reserved.</p>
   </footer>
 
+  <div id="onboardingModal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.85); z-index:9999; align-items:center; justify-content:center;">
+    <form id="onboardingForm" style="background:#232323; padding:2rem 2.5rem; border-radius:10px; max-width:400px; margin:auto; color:#fff; display:flex; flex-direction:column; gap:1.2rem;">
+      <h2 style="color:#e50914; text-align:center;">Tell us about your preferences</h2>
+      <label>Favorite Genre:
+        <select name="genre" required>
+          <option value="">Select</option>
+          <option value="Action">Action</option>
+          <option value="Comedy">Comedy</option>
+          <option value="Drama">Drama</option>
+          <option value="Sci-Fi">Sci-Fi</option>
+          <option value="Romance">Romance</option>
+          <option value="Horror">Horror</option>
+        </select>
+      </label>
+      <label>Favorite Actor:
+        <input type="text" name="actor" placeholder="e.g. Tom Hanks" required />
+      </label>
+      <label>Preferred Country:
+        <input type="text" name="country" placeholder="e.g. USA, India" required />
+      </label>
+      <button type="submit" style="background:#e50914; color:#fff; border:none; border-radius:4px; padding:0.8rem 0; font-weight:700; font-size:1.1rem;">Continue</button>
+    </form>
+  </div>
+
   <script src="script.js"></script>
+<script>
+// Onboarding modal logic
+function showOnboardingModal() {
+  document.getElementById('onboardingModal').style.display = 'flex';
+}
+function hideOnboardingModal() {
+  document.getElementById('onboardingModal').style.display = 'none';
+}
+// Show onboarding only after signup (not login)
+if (window.location.hash === '#show-onboarding' && !localStorage.getItem('onboardingComplete')) {
+  showOnboardingModal();
+}
+document.getElementById('onboardingForm')?.addEventListener('submit', function(e) {
+  e.preventDefault();
+  const genre = this.genre.value;
+  const actor = this.actor.value;
+  const country = this.country.value;
+  if (typeof trackOnboardingStep === 'function') {
+    trackOnboardingStep('favorite_genre');
+    trackOnboardingStep('favorite_actor');
+    trackOnboardingStep('preferred_country');
+  }
+  if (typeof amplitude !== 'undefined') {
+    amplitude.setUserProperties({ favorite_genre: genre, favorite_actor: actor, preferred_country: country });
+  }
+  if (typeof trackOnboardingComplete === 'function') {
+    trackOnboardingComplete();
+  }
+  localStorage.setItem('onboardingComplete', '1');
+  hideOnboardingModal();
+});
+</script>
 </body>
 </html>
