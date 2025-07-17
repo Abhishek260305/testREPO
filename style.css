@@ -251,6 +251,40 @@ html {
   border-top: 1px solid #232323;
 }
 
+.onboarding-actions {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+  margin-top: 1.2rem;
+  justify-content: space-between;
+}
+.onboarding-container button[type="submit"] {
+  background: #e50914;
+  color: #fff;
+  padding: 0.7rem 1.5rem;
+  border-radius: 4px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: background 0.2s;
+  display: inline-block;
+}
+.onboarding-container button[type="submit"]:hover {
+  background: #b0060f;
+}
+.skip-btn {
+  background: #232323;
+  color: #fff;
+  padding: 0.7rem 1.5rem;
+  border-radius: 4px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: background 0.2s;
+  display: inline-block;
+}
+.skip-btn:hover {
+  background: #333;
+}
+
 @media (max-width: 900px) {
   .features-list, .pricing-cards {
     flex-direction: column;

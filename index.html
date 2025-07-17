@@ -143,7 +143,10 @@
       <label>Preferred Country:
         <input type="text" name="country" placeholder="e.g. USA, India" required />
       </label>
-      <button type="submit" style="background:#e50914; color:#fff; border:none; border-radius:4px; padding:0.8rem 0; font-weight:700; font-size:1.1rem;">Continue</button>
+      <div class="onboarding-actions">
+        <button type="submit">Continue</button>
+        <button type="button" class="skip-btn" id="skipOnboarding">Skip</button>
+      </div>
     </form>
   </div>
 
@@ -169,7 +172,7 @@ window.addEventListener('DOMContentLoaded', function() {
     showOnboardingModal();
   }
 });
-document.getElementById('onboardingForm')?.addEventListener('submit', function(e) {
+document.getElementById('onboardingForm').addEventListener('submit', function(e) {
   e.preventDefault();
   const genre = this.genre.value;
   const actor = this.actor.value;
@@ -179,14 +182,27 @@ document.getElementById('onboardingForm')?.addEventListener('submit', function(e
     trackOnboardingStep('favorite_actor');
     trackOnboardingStep('preferred_country');
   }
-  if (typeof amplitude !== 'undefined') {
-    amplitude.setUserProperties({ favorite_genre: genre, favorite_actor: actor, preferred_country: country });
+  if (typeof amplitude !== 'undefined' && amplitude.getInstance) {
+    amplitude.getInstance().setUserProperties({ favorite_genre: genre, favorite_actor: actor, preferred_country: country });
+    amplitude.getInstance().logEvent('onboarding_complete', { skipped: false, favorite_genre: genre, favorite_actor: actor, preferred_country: country });
   }
   if (typeof trackOnboardingComplete === 'function') {
     trackOnboardingComplete();
   }
   localStorage.setItem('onboardingComplete', '1');
-  hideOnboardingModal();
+  window.location.href = 'dashboard.html';
+});
+
+document.getElementById('skipOnboarding').addEventListener('click', function(e) {
+  e.preventDefault();
+  if (typeof amplitude !== 'undefined' && amplitude.getInstance) {
+    amplitude.getInstance().logEvent('onboarding_complete', { skipped: true });
+  }
+  if (typeof trackOnboardingComplete === 'function') {
+    trackOnboardingComplete();
+  }
+  localStorage.setItem('onboardingComplete', '1');
+  window.location.href = 'dashboard.html';
 });
 </script>
 </body>

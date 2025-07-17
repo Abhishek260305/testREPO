@@ -127,9 +127,9 @@
         trackOnboardingStep('favorite_actor');
         trackOnboardingStep('preferred_country');
       }
-      if (typeof amplitude !== 'undefined') {
-        amplitude.setUserProperties({ favorite_genre: genre, favorite_actor: actor, preferred_country: country });
-        amplitude.logEvent('onboarding_complete', { skipped: false, favorite_genre: genre, favorite_actor: actor, preferred_country: country });
+      if (typeof amplitude !== 'undefined' && amplitude.getInstance) {
+        amplitude.getInstance().setUserProperties({ favorite_genre: genre, favorite_actor: actor, preferred_country: country });
+        amplitude.getInstance().logEvent('onboarding_complete', { skipped: false, favorite_genre: genre, favorite_actor: actor, preferred_country: country });
       }
       if (typeof trackOnboardingComplete === 'function') {
         trackOnboardingComplete();
@@ -139,8 +139,8 @@
     });
     document.getElementById('skipOnboarding').addEventListener('click', function(e) {
       e.preventDefault();
-      if (typeof amplitude !== 'undefined') {
-        amplitude.logEvent('onboarding_complete', { skipped: true });
+      if (typeof amplitude !== 'undefined' && amplitude.getInstance) {
+        amplitude.getInstance().logEvent('onboarding_complete', { skipped: true });
       }
       if (typeof trackOnboardingComplete === 'function') {
         trackOnboardingComplete();
