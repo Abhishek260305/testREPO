@@ -62,6 +62,21 @@
     .onboarding-container button:hover {
       background: #b0060f;
     }
+    .skip-btn {
+      background: #444;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      padding: 0.7rem 0;
+      font-weight: 500;
+      font-size: 1rem;
+      margin-top: 0.5rem;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .skip-btn:hover {
+      background: #222;
+    }
   </style>
 </head>
 <body>
@@ -85,12 +100,13 @@
       <input type="text" name="country" placeholder="e.g. USA, India" required />
     </label>
     <button type="submit">Continue</button>
+    <button type="button" class="skip-btn" id="skipOnboarding">Skip</button>
   </form>
   <script src="script.js"></script>
   <script>
     // Prevent repeat onboarding
     if (localStorage.getItem('onboardingComplete')) {
-      window.location.href = 'index.html';
+      window.location.href = 'dashboard.html';
     }
     document.getElementById('onboardingForm').addEventListener('submit', function(e) {
       e.preventDefault();
@@ -104,12 +120,23 @@
       }
       if (typeof amplitude !== 'undefined') {
         amplitude.setUserProperties({ favorite_genre: genre, favorite_actor: actor, preferred_country: country });
+        amplitude.logEvent('onboarding_complete', { skipped: false, favorite_genre: genre, favorite_actor: actor, preferred_country: country });
       }
       if (typeof trackOnboardingComplete === 'function') {
         trackOnboardingComplete();
       }
       localStorage.setItem('onboardingComplete', '1');
-      window.location.href = 'index.html';
+      window.location.href = 'dashboard.html';
+    });
+    document.getElementById('skipOnboarding').addEventListener('click', function() {
+      if (typeof amplitude !== 'undefined') {
+        amplitude.logEvent('onboarding_complete', { skipped: true });
+      }
+      if (typeof trackOnboardingComplete === 'function') {
+        trackOnboardingComplete();
+      }
+      localStorage.setItem('onboardingComplete', '1');
+      window.location.href = 'dashboard.html';
     });
   </script>
 </body>
