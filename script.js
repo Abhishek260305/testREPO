@@ -353,3 +353,24 @@ function trackSupportTicket(page, feature) {
     amplitude.logEvent('support_ticket_created', { page, feature });
   }
 }
+
+let maxScrollDepth = 0;
+window.addEventListener('scroll', () => {
+  const scrollTop = window.scrollY;
+  const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+  if (docHeight > 0) {
+    const percent = Math.round((scrollTop / docHeight) * 100);
+    if (percent > maxScrollDepth) {
+      maxScrollDepth = percent;
+      // Fire events at 25%, 50%, 75%, 100%
+      [25, 50, 75, 100].forEach(threshold => {
+        if (percent >= threshold && !window[`amplitude_scroll_${threshold}`]) {
+          window[`amplitude_scroll_${threshold}`] = true;
+          if (typeof amplitude !== 'undefined') {
+            amplitude.logEvent('scroll_depth', { percent: threshold, page: window.location.pathname });
+          }
+        }
+      });
+    }
+  }
+});
