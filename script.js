@@ -15,6 +15,15 @@ window.addEventListener('load', () => {
   if (typeof thriveStack !== 'undefined') {
     thriveStack.track('page_loaded', { page: window.location.pathname });
   }
+  const loadTime = performance.timing.domContentLoadedEventEnd - performance.timing.navigationStart;
+  if (typeof amplitude !== 'undefined') {
+    amplitude.logEvent('page_loaded', {
+      page: window.location.pathname,
+      load_time_ms: loadTime,
+      device: navigator.userAgent,
+      os: navigator.platform
+    });
+  }
 });
 
 // ---------- Smooth scroll for nav links and login/signup button ----------
@@ -306,3 +315,40 @@ document.querySelectorAll('.trailer').forEach(el => {
     amplitude.logEvent('content_click', { content_type: 'trailer' });
   });
 });
+
+function trackFeatureUse(feature) {
+  if (typeof amplitude !== 'undefined') {
+    amplitude.logEvent('feature_used', { feature_name: feature });
+  }
+}
+// Example usage:
+trackFeatureUse('watch_trailer');
+trackFeatureUse('add_to_watchlist');
+
+function trackError(errorType, errorMessage) {
+  if (typeof amplitude !== 'undefined') {
+    amplitude.logEvent('error_event', {
+      error_type: errorType,
+      error_message: errorMessage,
+      page: window.location.pathname
+    });
+  }
+}
+// Example usage:
+trackError('signup_failed', 'Email already exists');
+
+function trackCrash(errorType) {
+  if (typeof amplitude !== 'undefined') {
+    amplitude.logEvent('crash_event', {
+      error_type: errorType,
+      device: navigator.userAgent,
+      os: navigator.platform
+    });
+  }
+}
+
+function trackSupportTicket(page, feature) {
+  if (typeof amplitude !== 'undefined') {
+    amplitude.logEvent('support_ticket_created', { page, feature });
+  }
+}
