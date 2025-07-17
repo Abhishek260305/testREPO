@@ -47,7 +47,14 @@
       background: #181818;
       color: #fff;
     }
-    .onboarding-container button {
+    .onboarding-actions {
+      display: flex;
+      flex-direction: row;
+      gap: 1rem;
+      margin-top: 1.2rem;
+      justify-content: space-between;
+    }
+    .onboarding-container button[type="submit"] {
       background: #e50914;
       color: #fff;
       border: none;
@@ -55,11 +62,11 @@
       padding: 0.9rem 0;
       font-weight: 700;
       font-size: 1.1rem;
-      margin-top: 1rem;
+      flex: 1 1 60%;
       cursor: pointer;
       transition: background 0.2s;
     }
-    .onboarding-container button:hover {
+    .onboarding-container button[type="submit"]:hover {
       background: #b0060f;
     }
     .skip-btn {
@@ -67,10 +74,10 @@
       color: #fff;
       border: none;
       border-radius: 4px;
-      padding: 0.7rem 0;
+      padding: 0.9rem 0;
       font-weight: 500;
-      font-size: 1rem;
-      margin-top: 0.5rem;
+      font-size: 1.1rem;
+      flex: 1 1 40%;
       cursor: pointer;
       transition: background 0.2s;
     }
@@ -99,8 +106,10 @@
     <label>Preferred Country:
       <input type="text" name="country" placeholder="e.g. USA, India" required />
     </label>
-    <button type="submit">Continue</button>
-    <button type="button" class="skip-btn" id="skipOnboarding">Skip</button>
+    <div class="onboarding-actions">
+      <button type="submit">Continue</button>
+      <button type="button" class="skip-btn" id="skipOnboarding">Skip</button>
+    </div>
   </form>
   <script src="script.js"></script>
   <script>
@@ -128,7 +137,8 @@
       localStorage.setItem('onboardingComplete', '1');
       window.location.href = 'dashboard.html';
     });
-    document.getElementById('skipOnboarding').addEventListener('click', function() {
+    document.getElementById('skipOnboarding').addEventListener('click', function(e) {
+      e.preventDefault();
       if (typeof amplitude !== 'undefined') {
         amplitude.logEvent('onboarding_complete', { skipped: true });
       }
