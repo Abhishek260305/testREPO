@@ -12,9 +12,6 @@ window.addEventListener('load', () => {
   if (typeof mixpanel !== 'undefined') {
     mixpanel.track('page_loaded', { page: window.location.pathname });
   }
-  if (typeof thriveStack !== 'undefined') {
-    thriveStack.track('page_loaded', { page: window.location.pathname });
-  }
   const loadTime = performance.timing.domContentLoadedEventEnd - performance.timing.navigationStart;
   if (typeof amplitude !== 'undefined') {
     amplitude.logEvent('page_loaded', {
@@ -49,9 +46,6 @@ navLinks.forEach(link => {
         }
         if (typeof mixpanel !== 'undefined') {
           mixpanel.track('section_navigation', { section: href });
-        }
-        if (typeof thriveStack !== 'undefined') {
-          thriveStack.track('section_navigation', { section: href });
         }
       }
     }
@@ -101,9 +95,6 @@ window.addEventListener('scroll', () => {
     if (typeof mixpanel !== 'undefined' && lastTrackedSection !== current) {
       mixpanel.track('section_viewed', { section: current });
     }
-    if (typeof thriveStack !== 'undefined' && lastTrackedSection !== current) {
-      thriveStack.track('section_viewed', { section: current });
-    }
     lastTrackedSection = current;
   }
 });
@@ -132,9 +123,6 @@ if (loginForm) {
       if (typeof mixpanel !== 'undefined') {
         mixpanel.track('login_success', { email });
       }
-      if (typeof thriveStack !== 'undefined') {
-        thriveStack.track('login_success', { email });
-      }
       window.location.href = 'dashboard.html';
     } else {
       // Track login failure
@@ -149,9 +137,6 @@ if (loginForm) {
       }
       if (typeof mixpanel !== 'undefined') {
         mixpanel.track('login_failed', { email });
-      }
-      if (typeof thriveStack !== 'undefined') {
-        thriveStack.track('login_failed', { email });
       }
       alert('Invalid credentials. Please try again or sign up.');
     }
@@ -173,9 +158,6 @@ document.querySelectorAll('.btn-like').forEach(btn =>
     if (typeof mixpanel !== 'undefined') {
       mixpanel.track('video_like', { label: 'Like Clicked' });
     }
-    if (typeof thriveStack !== 'undefined') {
-      thriveStack.track('video_like', { label: 'Like Clicked' });
-    }
   })
 );
 
@@ -192,9 +174,6 @@ document.querySelectorAll('.btn-dislike').forEach(btn =>
     }
     if (typeof mixpanel !== 'undefined') {
       mixpanel.track('video_dislike', { label: 'Dislike Clicked' });
-    }
-    if (typeof thriveStack !== 'undefined') {
-      thriveStack.track('video_dislike', { label: 'Dislike Clicked' });
     }
   })
 );
@@ -213,9 +192,6 @@ document.querySelectorAll('.btn-play').forEach(btn =>
     if (typeof mixpanel !== 'undefined') {
       mixpanel.track('video_play', { label: 'Play Clicked' });
     }
-    if (typeof thriveStack !== 'undefined') {
-      thriveStack.track('video_play', { label: 'Play Clicked' });
-    }
   })
 );
 
@@ -232,9 +208,6 @@ document.querySelectorAll('.btn-pause').forEach(btn =>
     }
     if (typeof mixpanel !== 'undefined') {
       mixpanel.track('video_pause', { label: 'Pause Clicked' });
-    }
-    if (typeof thriveStack !== 'undefined') {
-      thriveStack.track('video_pause', { label: 'Pause Clicked' });
     }
   })
 );
