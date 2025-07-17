@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Onboarding - NetFlixX</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      background: #141414;
+      color: #fff;
+      font-family: 'Roboto', Arial, sans-serif;
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .onboarding-container {
+      background: #232323;
+      border-radius: 10px;
+      padding: 2.5rem 2rem;
+      max-width: 400px;
+      width: 100%;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+      display: flex;
+      flex-direction: column;
+      gap: 1.2rem;
+    }
+    .onboarding-container h2 {
+      color: #e50914;
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+    .onboarding-container label {
+      font-size: 1.1rem;
+      margin-bottom: 0.5rem;
+    }
+    .onboarding-container input, .onboarding-container select {
+      width: 100%;
+      padding: 0.7rem;
+      border-radius: 4px;
+      border: none;
+      margin-top: 0.3rem;
+      font-size: 1rem;
+      background: #181818;
+      color: #fff;
+    }
+    .onboarding-container button {
+      background: #e50914;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      padding: 0.9rem 0;
+      font-weight: 700;
+      font-size: 1.1rem;
+      margin-top: 1rem;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .onboarding-container button:hover {
+      background: #b0060f;
+    }
+  </style>
+</head>
+<body>
+  <form class="onboarding-container" id="onboardingForm">
+    <h2>Tell us about your preferences</h2>
+    <label>Favorite Genre:
+      <select name="genre" required>
+        <option value="">Select</option>
+        <option value="Action">Action</option>
+        <option value="Comedy">Comedy</option>
+        <option value="Drama">Drama</option>
+        <option value="Sci-Fi">Sci-Fi</option>
+        <option value="Romance">Romance</option>
+        <option value="Horror">Horror</option>
+      </select>
+    </label>
+    <label>Favorite Actor:
+      <input type="text" name="actor" placeholder="e.g. Tom Hanks" required />
+    </label>
+    <label>Preferred Country:
+      <input type="text" name="country" placeholder="e.g. USA, India" required />
+    </label>
+    <button type="submit">Continue</button>
+  </form>
+  <script src="script.js"></script>
+  <script>
+    // Prevent repeat onboarding
+    if (localStorage.getItem('onboardingComplete')) {
+      window.location.href = 'index.html';
+    }
+    document.getElementById('onboardingForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const genre = this.genre.value;
+      const actor = this.actor.value;
+      const country = this.country.value;
+      if (typeof trackOnboardingStep === 'function') {
+        trackOnboardingStep('favorite_genre');
+        trackOnboardingStep('favorite_actor');
+        trackOnboardingStep('preferred_country');
+      }
+      if (typeof amplitude !== 'undefined') {
+        amplitude.setUserProperties({ favorite_genre: genre, favorite_actor: actor, preferred_country: country });
+      }
+      if (typeof trackOnboardingComplete === 'function') {
+        trackOnboardingComplete();
+      }
+      localStorage.setItem('onboardingComplete', '1');
+      window.location.href = 'index.html';
+    });
+  </script>
+</body>
+</html> 

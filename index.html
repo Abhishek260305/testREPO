@@ -151,7 +151,10 @@
 <script>
 // Onboarding modal logic
 function showOnboardingModal() {
-  document.getElementById('onboardingModal').style.display = 'flex';
+  var modal = document.getElementById('onboardingModal');
+  modal.style.display = 'flex';
+  modal.style.alignItems = 'center';
+  modal.style.justifyContent = 'center';
 }
 function hideOnboardingModal() {
   document.getElementById('onboardingModal').style.display = 'none';
@@ -160,6 +163,12 @@ function hideOnboardingModal() {
 if (window.location.hash === '#show-onboarding' && !localStorage.getItem('onboardingComplete')) {
   showOnboardingModal();
 }
+// Fallback: if hash is #show-onboarding, always try to show modal
+window.addEventListener('DOMContentLoaded', function() {
+  if (window.location.hash === '#show-onboarding' && !localStorage.getItem('onboardingComplete')) {
+    showOnboardingModal();
+  }
+});
 document.getElementById('onboardingForm')?.addEventListener('submit', function(e) {
   e.preventDefault();
   const genre = this.genre.value;
