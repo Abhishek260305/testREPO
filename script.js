@@ -339,6 +339,7 @@ trackError('signup_failed', 'Email already exists');
 
 function trackCrash(errorType) {
   if (typeof amplitude !== 'undefined') {
+    console.log("Hi")
     amplitude.logEvent('crash_event', {
       error_type: errorType,
       device: navigator.userAgent,
