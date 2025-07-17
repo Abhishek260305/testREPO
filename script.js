@@ -349,3 +349,20 @@ window.addEventListener('scroll', () => {
     }
   }
 });
+
+// ---------- Onboarding Step Tracking for Amplitude ----------
+function trackOnboardingStep(stepName) {
+  if (typeof amplitude !== 'undefined') {
+    amplitude.logEvent('onboarding_step', { step_name: stepName });
+  }
+}
+function trackOnboardingComplete() {
+  if (typeof amplitude !== 'undefined') {
+    amplitude.logEvent('onboarding_complete');
+  }
+}
+// Example usage:
+// trackOnboardingStep('profile_setup');
+// trackOnboardingStep('choose_plan');
+// trackOnboardingStep('add_payment');
+// trackOnboardingComplete();
