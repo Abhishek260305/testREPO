@@ -274,3 +274,35 @@ window.addEventListener('beforeunload', () => {
     amplitude.logEvent('session_end', { duration_ms: duration });
   }
 });
+
+function getUTMParams() {
+  const params = new URLSearchParams(window.location.search);
+  return {
+    utm_source: params.get('utm_source'),
+    utm_medium: params.get('utm_medium'),
+    utm_campaign: params.get('utm_campaign')
+  };
+}
+const utms = getUTMParams();
+if (typeof amplitude !== 'undefined' && utms.utm_source) {
+  amplitude.setUserProperties(utms);
+}
+
+document.querySelectorAll('.btn-cta').forEach(btn => {
+  btn.addEventListener('click', () => {
+    if (typeof amplitude !== 'undefined') {
+      amplitude.logEvent('cta_click', { location: window.location.pathname });
+    }
+  });
+});
+
+document.querySelectorAll('.poster').forEach(el => {
+  el.addEventListener('click', () => {
+    amplitude.logEvent('content_click', { content_type: 'poster' });
+  });
+});
+document.querySelectorAll('.trailer').forEach(el => {
+  el.addEventListener('click', () => {
+    amplitude.logEvent('content_click', { content_type: 'trailer' });
+  });
+});
