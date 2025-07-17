@@ -354,6 +354,8 @@ function trackSupportTicket(page, feature) {
   }
 }
 
+console.log("Debug")
+
 let maxScrollDepth = 0;
 window.addEventListener('scroll', () => {
   const scrollTop = window.scrollY;
