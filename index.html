@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Netflix Landing Page</title>
-  <link rel="stylesheet" href="style.css">
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-  
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
+
   <!-- Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-FDBB7C75FV"></script>
   <script>
@@ -17,20 +17,16 @@
   </script>
 
   <!-- Amplitude Analytics -->
-  <script src="https://cdn.amplitude.com/script/ade7e539f08196c7af9b49113c377ba3.js"></script><script>window.amplitude.add(window.sessionReplay.plugin({sampleRate: 1}));window.amplitude.init('ade7e539f08196c7af9b49113c377ba3', {"fetchRemoteConfig":true,"autocapture":true});</script>
-
-  <!-- Mixpanel Analytics -->
-  <script type="text/javascript">
-    (function(f,b){if(!b.__SV){var a,e,i,g;window.mixpanel=b;b._i=[];b.init=function(a,e,d){function f(b,h){var a=h.split(".");2==a.length&&(b=b[a[0]],h=a[1]);b[h]=function(){b.push([h].concat(Array.prototype.slice.call(arguments,0)))}}var c=b;"undefined"!==typeof d?c=b[d]=[]:d="mixpanel";c.people=c.people||[];c.toString=function(b){var a="mixpanel";"mixpanel"!==d&&(a+="."+d);b||(a+=" (stub)");return a};c.people.toString=function(){return c.toString(1)+".people (stub)"};i="disable time_event track track_pageview track_links track_forms register register_once alias unregister identify name_tag set_config reset people.set people.set_once people.unset people.increment people.append people.union people.track_charge people.clear_charges people.delete_user".split(" ");for(g=0;g<i.length;g++)f(c,i[g]);b._i.push([a,e,d])};b.__SV=1.2;a=f.createElement("script");a.type="text/javascript";a.async=!0;a.src="https://cdn.mxpnl.com/libs/mixpanel-2-latest.min.js";e=f.getElementsByTagName("script")[0];e.parentNode.insertBefore(a,e)}})(document,window.mixpanel||[]);
-    mixpanel.init("3d7cfe3bafbda9c8c1450f6972c1cb8f");
+  <script src="https://cdn.amplitude.com/script/ade7e539f08196c7af9b49113c377ba3.js"></script>
+  <script>
+    window.amplitude.add(window.sessionReplay.plugin({ sampleRate: 1 }));
+    window.amplitude.init('ade7e539f08196c7af9b49113c377ba3', {
+      fetchRemoteConfig: true,
+      autocapture: true
+    });
   </script>
-<!-- 
-  <script src="https://ts-script.app.thrivestack.ai/latest/thrivestack.js" 
-    api-key="m9S/wwTPiv7egZcG7DeBdvlsW37YfHRMpstb3xh1S0g=" 
-    source="marketing,product">
-  </script> -->
-
 </head>
+
 <body>
   <nav class="navbar">
     <div class="logo">NetFlixX</div>
@@ -112,8 +108,8 @@
   <section id="login-signup" class="section login-section">
     <h2>Login / Signup</h2>
     <form class="auth-form" id="loginForm">
-      <input type="email" placeholder="Email" id="loginEmail" required>
-      <input type="password" placeholder="Password" id="loginPassword" required>
+      <input type="email" placeholder="Email" id="loginEmail" required />
+      <input type="password" placeholder="Password" id="loginPassword" required />
       <button type="submit" class="btn-auth">Login</button>
       <p class="signup-link">New here? <a href="signup.html" id="signupLink">Sign up now</a></p>
     </form>
@@ -123,6 +119,7 @@
     <p>&copy; 2024 NetFlixX. All rights reserved.</p>
   </footer>
 
+  <!-- Onboarding Modal -->
   <div id="onboardingModal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.85); z-index:9999; align-items:center; justify-content:center;">
     <form id="onboardingForm" style="background:#232323; padding:2rem 2.5rem; border-radius:10px; max-width:400px; margin:auto; color:#fff; display:flex; flex-direction:column; gap:1.2rem;">
       <h2 style="color:#e50914; text-align:center;">Tell us about your preferences</h2>
@@ -150,85 +147,93 @@
     </form>
   </div>
 
-  <script src="script.js"></script>
-<script>
-// Onboarding modal logic
-function showOnboardingModal() {
-  var modal = document.getElementById('onboardingModal');
-  modal.style.display = 'flex';
-  modal.style.alignItems = 'center';
-  modal.style.justifyContent = 'center';
-}
-function hideOnboardingModal() {
-  document.getElementById('onboardingModal').style.display = 'none';
-}
-// Show onboarding only after signup (not login)
-if (window.location.hash === '#show-onboarding' && !localStorage.getItem('onboardingComplete')) {
-  showOnboardingModal();
-}
-// Fallback: if hash is #show-onboarding, always try to show modal
-window.addEventListener('DOMContentLoaded', function() {
-  if (window.location.hash === '#show-onboarding' && !localStorage.getItem('onboardingComplete')) {
-    showOnboardingModal();
-  }
-});
+  <script>
+    // Show onboarding modal
+    function showOnboardingModal() {
+      const modal = document.getElementById('onboardingModal');
+      modal.style.display = 'flex';
+      modal.style.alignItems = 'center';
+      modal.style.justifyContent = 'center';
 
-// Track when onboarding is opened
-if (typeof amplitude !== 'undefined' && amplitude.getInstance) {
-  amplitude.getInstance().logEvent('onboarding_started');
-}
+      // ✅ Track onboarding started
+      if (typeof amplitude !== 'undefined' && amplitude.getInstance) {
+        amplitude.getInstance().logEvent('onboarding_started');
+      }
+    }
 
-// Optional: define step tracking for granularity
-function trackOnboardingStep(stepName) {
-  if (typeof amplitude !== 'undefined' && amplitude.getInstance) {
-    amplitude.getInstance().logEvent('onboarding_step', { step: stepName });
-  }
-}
+    function hideOnboardingModal() {
+      document.getElementById('onboardingModal').style.display = 'none';
+    }
 
-document.getElementById('onboardingForm').addEventListener('submit', function(e) {
-  e.preventDefault();
-  const genre = this.genre.value;
-  const actor = this.actor.value;
-  const country = this.country.value;
-  if (typeof trackOnboardingStep === 'function') {
-    trackOnboardingStep('favorite_genre');
-    trackOnboardingStep('favorite_actor');
-    trackOnboardingStep('preferred_country');
-  }
-  if (typeof amplitude !== 'undefined' && amplitude.getInstance) {
-    amplitude.getInstance().setUserProperties({
-      favorite_genre: genre,
-      favorite_actor: actor,
-      preferred_country: country
+    // Show onboarding only after signup
+    if (window.location.hash === '#show-onboarding' && !localStorage.getItem('onboardingComplete')) {
+      showOnboardingModal();
+    }
+
+    // Track steps if needed
+    function trackOnboardingStep(stepName) {
+      if (typeof amplitude !== 'undefined' && amplitude.getInstance) {
+        amplitude.getInstance().logEvent('onboarding_step', { step: stepName });
+      }
+    }
+
+    // Submit handler
+    document.getElementById('onboardingForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const genre = this.genre.value;
+      const actor = this.actor.value;
+      const country = this.country.value;
+
+      // Optional step tracking
+      trackOnboardingStep('favorite_genre');
+      trackOnboardingStep('favorite_actor');
+      trackOnboardingStep('preferred_country');
+
+      if (typeof amplitude !== 'undefined' && amplitude.getInstance) {
+        amplitude.getInstance().setUserProperties({
+          onboarding_skipped: false,
+          favorite_genre: genre,
+          favorite_actor: actor,
+          preferred_country: country
+        });
+
+        amplitude.getInstance().logEvent('onboarding_complete', {
+          skipped: false,
+          favorite_genre: genre,
+          favorite_actor: actor,
+          preferred_country: country
+        });
+      }
+
+      localStorage.setItem('onboardingComplete', '1');
+      hideOnboardingModal();
+      window.location.href = 'dashboard.html';
     });
-    amplitude.getInstance().logEvent('onboarding_complete', {
-      skipped: false,
-      favorite_genre: genre,
-      favorite_actor: actor,
-      preferred_country: country
-    });
-  }
-  if (typeof trackOnboardingComplete === 'function') {
-    trackOnboardingComplete();
-  }
-  localStorage.setItem('onboardingComplete', '1');
-  hideOnboardingModal();
-  window.location.href = 'dashboard.html';
-});
 
-document.getElementById('skipOnboarding').addEventListener('click', function(e) {
-  e.preventDefault();
-  if (typeof amplitude !== 'undefined' && amplitude.getInstance) {
-    amplitude.getInstance().logEvent('onboarding_skip');
-    amplitude.getInstance().logEvent('onboarding_complete', { skipped: true });
-  }
-  if (typeof trackOnboardingComplete === 'function') {
-    trackOnboardingComplete();
-  }
-  localStorage.setItem('onboardingComplete', '1');
-  hideOnboardingModal();
-  window.location.href = 'dashboard.html';
-});
-</script>
+    // Skip button handler
+    document.getElementById('skipOnboarding').addEventListener('click', function(e) {
+      e.preventDefault();
+
+      if (typeof amplitude !== 'undefined' && amplitude.getInstance) {
+        amplitude.getInstance().setUserProperties({
+          onboarding_skipped: true
+        });
+
+        amplitude.getInstance().logEvent('onboarding_skipped');
+        amplitude.getInstance().logEvent('onboarding_complete', { skipped: true });
+      }
+
+      localStorage.setItem('onboardingComplete', '1');
+      hideOnboardingModal();
+      window.location.href = 'dashboard.html';
+    });
+
+    // Fallback: Show onboarding on load if hash is present
+    window.addEventListener('DOMContentLoaded', function() {
+      if (window.location.hash === '#show-onboarding' && !localStorage.getItem('onboardingComplete')) {
+        showOnboardingModal();
+      }
+    });
+  </script>
 </body>
 </html>
