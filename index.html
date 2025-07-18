@@ -172,6 +172,19 @@ window.addEventListener('DOMContentLoaded', function() {
     showOnboardingModal();
   }
 });
+
+// Track when onboarding is opened
+if (typeof amplitude !== 'undefined' && amplitude.getInstance) {
+  amplitude.getInstance().logEvent('onboarding_started');
+}
+
+// Optional: define step tracking for granularity
+function trackOnboardingStep(stepName) {
+  if (typeof amplitude !== 'undefined' && amplitude.getInstance) {
+    amplitude.getInstance().logEvent('onboarding_step', { step: stepName });
+  }
+}
+
 document.getElementById('onboardingForm').addEventListener('submit', function(e) {
   e.preventDefault();
   const genre = this.genre.value;
@@ -183,25 +196,37 @@ document.getElementById('onboardingForm').addEventListener('submit', function(e)
     trackOnboardingStep('preferred_country');
   }
   if (typeof amplitude !== 'undefined' && amplitude.getInstance) {
-    amplitude.getInstance().setUserProperties({ favorite_genre: genre, favorite_actor: actor, preferred_country: country });
-    amplitude.getInstance().logEvent('onboarding_complete', { skipped: false, favorite_genre: genre, favorite_actor: actor, preferred_country: country });
+    amplitude.getInstance().setUserProperties({
+      favorite_genre: genre,
+      favorite_actor: actor,
+      preferred_country: country
+    });
+    amplitude.getInstance().logEvent('onboarding_complete', {
+      skipped: false,
+      favorite_genre: genre,
+      favorite_actor: actor,
+      preferred_country: country
+    });
   }
   if (typeof trackOnboardingComplete === 'function') {
     trackOnboardingComplete();
   }
   localStorage.setItem('onboardingComplete', '1');
+  hideOnboardingModal();
   window.location.href = 'dashboard.html';
 });
 
 document.getElementById('skipOnboarding').addEventListener('click', function(e) {
   e.preventDefault();
   if (typeof amplitude !== 'undefined' && amplitude.getInstance) {
+    amplitude.getInstance().logEvent('onboarding_skip');
     amplitude.getInstance().logEvent('onboarding_complete', { skipped: true });
   }
   if (typeof trackOnboardingComplete === 'function') {
     trackOnboardingComplete();
   }
   localStorage.setItem('onboardingComplete', '1');
+  hideOnboardingModal();
   window.location.href = 'dashboard.html';
 });
 </script>
