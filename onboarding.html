@@ -113,6 +113,19 @@
   </form>
   <script src="script.js"></script>
   <script>
+  // Track when onboarding is opened
+  if (typeof amplitude !== 'undefined' && amplitude.getInstance) {
+    amplitude.getInstance().logEvent('onboarding_started');
+  }
+
+  // Optional: define step tracking for granularity
+  function trackOnboardingStep(stepName) {
+    if (typeof amplitude !== 'undefined' && amplitude.getInstance) {
+      amplitude.getInstance().logEvent('onboarding_step', { step: stepName });
+    }
+  }
+
+  // The rest of your existing script follows...
     // Prevent repeat onboarding
     if (localStorage.getItem('onboardingComplete')) {
       window.location.href = 'dashboard.html';
