@@ -350,15 +350,28 @@ window.addEventListener('scroll', () => {
   }
 });
 
-// ---------- Onboarding Step Tracking for Amplitude ----------
+// ---------- Onboarding Event Tracking for Amplitude ----------
+function trackOnboardingStart() {
+  if (typeof amplitude !== 'undefined') {
+    amplitude.logEvent('onboarding_start');
+  }
+}
+
 function trackOnboardingStep(stepName) {
   if (typeof amplitude !== 'undefined') {
     amplitude.logEvent('onboarding_step', { step_name: stepName });
   }
 }
+
 function trackOnboardingComplete() {
   if (typeof amplitude !== 'undefined') {
     amplitude.logEvent('onboarding_complete');
+  }
+}
+
+function trackOnboardingSkip() {
+  if (typeof amplitude !== 'undefined') {
+    amplitude.logEvent('onboarding_skip');
   }
 }
 // Example usage:
