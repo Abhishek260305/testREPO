@@ -53,12 +53,12 @@
     })(document,window.mixpanel||[]);
     mixpanel.init("3d7cfe3bafbda9c8c1450f6972c1cb8f");
   </script>
-
+<!-- 
+  ✅ ThriveStack
   <script src="https://ts-script.app.thrivestack.ai/latest/thrivestack.js" 
     api-key="m9S/wwTPiv7egZcG7DeBdvlsW37YfHRMpstb3xh1S0g=" 
     source="marketing,product">
-  </script>
-  
+  </script> -->
 </head>
 
 <body>
@@ -82,79 +82,48 @@
 
   <!-- ✅ Signup Tracking Logic -->
   <script>
-    // Signup logic
     const signupForm = document.getElementById('signupForm');
+    const emailInput = document.getElementById('signupEmail');
+    const passwordInput = document.getElementById('signupPassword');
+
+    // Track when signup starts (email field focused)
+    emailInput.addEventListener('focus', () => {
+      if (typeof amplitude !== 'undefined') amplitude.logEvent('signup_started');
+      if (typeof mixpanel !== 'undefined') mixpanel.track('signup_started');
+      if (typeof thriveStack !== 'undefined') thriveStack.track('signup_started');
+    });
+
     if (signupForm) {
       signupForm.addEventListener('submit', function(e) {
         e.preventDefault();
-        const email = document.getElementById('signupEmail').value;
-        const password = document.getElementById('signupPassword').value;
-        // Optionally collect user name if you have a field for it
-        const userName = '';
+        const email = emailInput.value;
+        const password = passwordInput.value;
+
+        // Track submission attempt
+        if (typeof amplitude !== 'undefined') amplitude.logEvent('signup_submitted', { email });
+        if (typeof mixpanel !== 'undefined') mixpanel.track('signup_submitted', { email });
+        if (typeof thriveStack !== 'undefined') thriveStack.track('signup_submitted', { email });
+
+        // If fields are empty, track failure
+        if (!email || !password) {
+          if (typeof amplitude !== 'undefined') amplitude.logEvent('signup_failed', { reason: 'empty_fields' });
+          if (typeof mixpanel !== 'undefined') mixpanel.track('signup_failed', { reason: 'empty_fields' });
+          if (typeof thriveStack !== 'undefined') thriveStack.track('signup_failed', { reason: 'empty_fields' });
+          alert('Please fill in all fields');
+          return;
+        }
+
+        // Save to session storage
         sessionStorage.setItem('signupEmail', email);
         sessionStorage.setItem('signupPassword', password);
-        // UTM params
-        function getUTMParams() {
-          const params = new URLSearchParams(window.location.search);
-          return {
-            utm_source: params.get('utm_source'),
-            utm_medium: params.get('utm_medium'),
-            utm_campaign: params.get('utm_campaign'),
-            utm_term: params.get('utm_term')
-          };
-        }
-        const utms = getUTMParams();
-        // Generate or retrieve a user_id
-        let userIdKey = `user_id_${email}`;
-        let userId = localStorage.getItem(userIdKey);
-        if (!userId) {
-          userId = 'user_' + Math.random().toString(36).substr(2, 9) + '_' + Date.now();
-          localStorage.setItem(userIdKey, userId);
-        }
-        // Generate or retrieve an account_id (simulate for demo)
-        let accountIdKey = `account_id_${email}`;
-        let accountId = localStorage.getItem(accountIdKey);
-        if (!accountId) {
-          accountId = 'acc_' + Math.random().toString(36).substr(2, 9) + '_' + Date.now();
-          localStorage.setItem(accountIdKey, accountId);
-        }
-        // Extract domain from email
-        const accountDomain = email.split('@')[1] || '';
-        // Simulate account name from domain (or use a field if you have one)
-        const accountName = accountDomain.split('.')[0].charAt(0).toUpperCase() + accountDomain.split('.')[0].slice(1);
-        // ThriveStack batch event for signed_up
-        if (typeof thriveStack !== 'undefined' && typeof window.thriveStack.track === 'function') {
-          window.thriveStack.track([
-            {
-              event_name: 'signed_up',
-              properties: {
-                user_email: email,
-                user_name: userName,
-                utm_campaign: utms.utm_campaign,
-                utm_medium: utms.utm_medium,
-                utm_source: utms.utm_source,
-                utm_term: utms.utm_term
-              },
-              user_id: userId,
-              timestamp: new Date().toISOString()
-            },
-            {
-              event_name: 'account_created',
-              properties: {
-                account_domain: accountDomain,
-                account_id: accountId,
-                account_name: accountName
-              },
-              user_id: userId,
-              timestamp: new Date().toISOString(),
-              context: {
-                group_id: accountId
-              }
-            }
-          ]);
-        }
-        alert('Signup successful! Please continue onboarding.');
-        window.location.href = 'onboarding.html';
+
+        // Track success
+        if (typeof amplitude !== 'undefined') amplitude.logEvent('signup_success', { email });
+        if (typeof mixpanel !== 'undefined') mixpanel.track('signup_success', { email });
+        if (typeof thriveStack !== 'undefined') thriveStack.track('signup_success', { email });
+
+        alert('Signup successful! Please login.');
+        window.location.href = 'index.html#show-onboarding';
       });
     }
   </script>

@@ -22,10 +22,10 @@
     mixpanel.init("3d7cfe3bafbda9c8c1450f6972c1cb8f");
   </script>
 
-  <script src="https://ts-script.app.thrivestack.ai/latest/thrivestack.js" 
+  <!-- <script src="https://ts-script.app.thrivestack.ai/latest/thrivestack.js" 
     api-key="m9S/wwTPiv7egZcG7DeBdvlsW37YfHRMpstb3xh1S0g=" 
     source="marketing,product">
-  </script>
+  </script> -->
 
   <style>
     body {
@@ -291,65 +291,6 @@
       }
       if (typeof amplitude !== 'undefined') {
         amplitude.logEvent('movie_click', { movie: title });
-      }
-    }
-
-    function setThriveStackUser(userId, userEmail) {
-      if (typeof thriveStack !== 'undefined' && typeof thriveStack.setUser === 'function') {
-        windows.thriveStack.setUser(userId, userEmail);
-      }
-    }
-
-    document.addEventListener('DOMContentLoaded', () => {
-      // Check if user is logged in
-      const userEmail = sessionStorage.getItem('signupEmail');
-      let userId = null;
-      if (userEmail) {
-        let userIdKey = `user_id_${userEmail}`;
-        userId = localStorage.getItem(userIdKey);
-        if (userId && userEmail) {
-          setThriveStackUser(userId, userEmail);
-        }
-      }
-
-      // Feature engagement tracking for play, pause, like, dislike buttons
-      const playBtn = document.querySelector('.btn-play');
-      if (playBtn) playBtn.addEventListener('click', () => trackFeatureAndThriveStack('play', 'user'));
-      const pauseBtn = document.querySelector('.btn-pause');
-      if (pauseBtn) pauseBtn.addEventListener('click', () => trackFeatureAndThriveStack('pause', 'user'));
-      const likeBtn = document.querySelector('.btn-like');
-      if (likeBtn) likeBtn.addEventListener('click', () => trackFeatureAndThriveStack('like', 'user'));
-      const dislikeBtn = document.querySelector('.btn-dislike');
-      if (dislikeBtn) dislikeBtn.addEventListener('click', () => trackFeatureAndThriveStack('dislike', 'user'));
-    });
-
-    // Feature use
-    trackFeatureAndThriveStack('watch_trailer', 'user');
-    trackFeatureAndThriveStack('add_to_watchlist', 'user');
-    trackFeatureAndThriveStack('play', 'user');
-    trackFeatureAndThriveStack('pause', 'user');
-    trackFeatureAndThriveStack('like', 'user');
-    trackFeatureAndThriveStack('dislike', 'user');
-
-    // Add this helper if not already present
-    function getUserContext() {
-      return {
-        user_id: sessionStorage.getItem('signupEmail') || 'anonymous_user',
-        device_id: localStorage.getItem('device_id') || 'anonymous_device_' + Math.random().toString(36).substring(2),
-      };
-    }
-    function trackFeatureAndThriveStack(feature, userRole) {
-      if (typeof thriveStack !== 'undefined' && typeof window.thriveStack.track === 'function') {
-        window.thriveStack.track([
-          {
-            event_name: 'feature_used',
-            properties: {
-              feature_name: feature,
-              user_role: userRole
-            },
-            context: getUserContext(),
-          },
-        ]);
       }
     }
   </script>
