@@ -122,25 +122,37 @@
         if (typeof mixpanel !== 'undefined') mixpanel.track('signup_success', { email });
 
         // ThriveStack tracking
-        if (window.thriveStack?.track) {
-          try {
-            window.thriveStack.track([{
-              "event_name": "signed_up",
-              "properties": {
-                "user_email": email,
-                "user_name": email.split('@')[0], // Default to email prefix as name
-                "utm_campaign": "customer_success",
-                "utm_medium": "referral",
-                "utm_source": "twitter",
-                "utm_term": "free_trial"
-              },
-              "user_id": userId,
-              "timestamp": timestamp
-            }]);
-          } catch (e) {
-            console.error("ThriveStack tracking error:", e);
-          }
-        }
+          console.log("[DEBUG] Checking ThriveStack availability:", {
+    exists: typeof window.thriveStack !== 'undefined',
+    hasTrack: window.thriveStack?.track ? true : false
+  });
+
+  if (window.thriveStack?.track) {
+    const eventData = {
+      "event_name": "signed_up",
+      "properties": {
+        "user_email": email,
+        "user_name": email.split('@')[0],
+        "utm_campaign": "customer_success",
+        "utm_medium": "referral",
+        "utm_source": "twitter",
+        "utm_term": "free_trial"
+      },
+      "user_id": userId,
+      "timestamp": timestamp
+    };
+
+    console.log("[DEBUG] Sending to ThriveStack:", eventData);
+    
+    try {
+      window.thriveStack.track([eventData]);
+      console.log("[DEBUG] ThriveStack track succeeded");
+    } catch (e) {
+      console.error("[DEBUG] ThriveStack track error:", e);
+    }
+  } else {
+    console.warn("[DEBUG] ThriveStack not available for tracking");
+  }
 
         alert('Signup successful! Please login.');
         window.location.href = 'index.html#show-onboarding';
