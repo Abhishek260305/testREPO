@@ -206,6 +206,24 @@
               timestamp: new Date(signupData.timestamp).toISOString()
             }]);
           }
+
+          // Track account creation (NEW CORRECTED POSITION)
+        if (window.thriveStack && !localStorage.getItem('accountCreatedTracked')) {
+            window.thriveStack.track([{
+                "event_name": "account_created",
+                "properties": {
+                    "account_domain": "netflixx.com",
+                    "account_id": "netflixx-account-" + crypto.randomUUID(),
+                    "account_name": signupData.email.split('@')[0] + "'s Account"
+                },
+                "user_id": signupData.userId || crypto.randomUUID(),
+                "timestamp": new Date().toISOString(),
+                "context": {
+                    "group_id": "netflixx-account-" + crypto.randomUUID()
+                }
+            }]);
+            localStorage.setItem('accountCreatedTracked', 'true');
+        }
           
           // Track with other analytics
           amplitude?.logEvent('signup_converted', { 
