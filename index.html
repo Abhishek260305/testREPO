@@ -26,11 +26,19 @@
     });
   </script>
 
+  <!-- Mixpanel -->
+  <script type="text/javascript">
+    (function(f,b){if(!b.__SV){var a,e,i,g;window.mixpanel=b;b._i=[];
+    b.init=function(a,e,d){function f(b,h){var a=h.split(".");2==a.length&&(b=b[a[0]],h=a[1]);b[h]=function(){b.push([h].concat(Array.prototype.slice.call(arguments,0)))}}var c=b;"undefined"!==typeof d?c=b[d]=[]:d="mixpanel";c.people=c.people||[];c.toString=function(b){var a="mixpanel";"mixpanel"!==d&&(a+="."+d);b||(a+=" (stub)");return a};c.people.toString=function(){return c.toString(1)+".people (stub)"};i="disable time_event track track_pageview track_links track_forms register register_once alias unregister identify name_tag set_config reset people.set people.set_once people.unset people.increment people.append people.union people.track_charge people.clear_charges people.delete_user".split(" ");
+    for(g=0;g<i.length;g++)f(c,i[g]);b._i.push([a,e,d])};b.__SV=1.2;a=f.createElement("script");a.type="text/javascript";a.async=!0;a.src="https://cdn.mxpnl.com/libs/mixpanel-2-latest.min.js";e=f.getElementsByTagName("script")[0];e.parentNode.insertBefore(a,e)}})(document,window.mixpanel||[]);
+    mixpanel.init("3d7cfe3bafbda9c8c1450f6972c1cb8f");
+  </script>
+
+  <!-- ThriveStack -->
   <script src="https://ts-script.app.thrivestack.ai/latest/thrivestack.js" 
     api-key="m9S/wwTPiv7egZcG7DeBdvlsW37YfHRMpstb3xh1S0g=" 
     source="marketing,product">
-</script>
-
+  </script>
 </head>
 
 <body>
@@ -152,88 +160,198 @@
       </div>
     </form>
   </div>
-<script src="script.js"></script>
-<script>
-  function showOnboardingModal() {
-    const modal = document.getElementById('onboardingModal');
-    modal.style.display = 'flex';
-    modal.style.alignItems = 'center';
-    modal.style.justifyContent = 'center';
 
-    if (typeof trackOnboardingStart === 'function') {
-      trackOnboardingStart();
-    }
-  }
-
-  function hideOnboardingModal() {
-    document.getElementById('onboardingModal').style.display = 'none';
-  }
-
-  if (window.location.hash === '#show-onboarding' && !localStorage.getItem('onboardingComplete')) {
-    showOnboardingModal();
-  }
-
-  document.getElementById('onboardingForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    const genre = this.genre.value;
-    const actor = this.actor.value;
-    const country = this.country.value;
-
-    if (typeof trackOnboardingStep === 'function') {
-      trackOnboardingStep('favorite_genre');
-      trackOnboardingStep('favorite_actor');
-      trackOnboardingStep('preferred_country');
-    }
-
-    if (typeof amplitude !== 'undefined' && amplitude.getInstance) {
-      amplitude.getInstance().setUserProperties({
-        onboarding_skipped: false,
-        favorite_genre: genre,
-        favorite_actor: actor,
-        preferred_country: country
+  <script>
+    // Track page view
+    document.addEventListener('DOMContentLoaded', function() {
+      // Track page load
+      gtag('event', 'page_view', {
+        page_title: document.title,
+        page_location: window.location.href,
+        page_path: window.location.pathname
       });
-      amplitude.getInstance().logEvent('onboarding_complete', {
-        skipped: false,
-        favorite_genre: genre,
-        favorite_actor: actor,
-        preferred_country: country
+      
+      amplitude?.logEvent('page_view', {
+        page: window.location.pathname,
+        title: document.title
       });
-    }
-
-    if (typeof trackOnboardingComplete === 'function') {
-      trackOnboardingComplete();
-    }
-
-    localStorage.setItem('onboardingComplete', '1');
-    hideOnboardingModal();
-    window.location.href = 'dashboard.html';
-  });
-
-  document.getElementById('skipOnboarding').addEventListener('click', function(e) {
-    e.preventDefault();
-
-    if (typeof amplitude !== 'undefined' && amplitude.getInstance) {
-      amplitude.getInstance().setUserProperties({
-        onboarding_skipped: true
+      
+      mixpanel?.track('page_view', {
+        page: window.location.pathname,
+        title: document.title
       });
-      amplitude.getInstance().logEvent('onboarding_skip');
-      amplitude.getInstance().logEvent('onboarding_complete', { skipped: true });
-    }
 
-    if (typeof trackOnboardingSkip === 'function') {
-      trackOnboardingSkip();
-    }
+      // Check for recent signup
+      const urlParams = new URLSearchParams(window.location.search);
+      const fromSignup = urlParams.get('from_signup');
+      
+      if (fromSignup) {
+        const signupData = JSON.parse(localStorage.getItem('tempSignupData'));
+        const expiry = localStorage.getItem('signupDataExpiry');
+        
+        if (signupData && expiry && Date.now() < expiry) {
+          // Track successful signup
+          if (window.thriveStack) {
+            window.thriveStack.track([{
+              event_name: "signed_up",
+              properties: {
+                user_email: signupData.email,
+                user_name: signupData.email.split('@')[0],
+                utm_campaign: signupData.utm_campaign,
+                utm_medium: signupData.utm_medium,
+                utm_source: signupData.utm_source,
+                utm_term: signupData.utm_term
+              },
+              user_id: crypto.randomUUID(),
+              timestamp: new Date(signupData.timestamp).toISOString()
+            }]);
+          }
+          
+          // Track with other analytics
+          amplitude?.logEvent('signup_converted', { 
+            email: signupData.email,
+            ...signupData
+          });
+          
+          mixpanel?.track('signup_converted', { 
+            email: signupData.email,
+            ...signupData
+          });
+          
+          // Clean up
+          localStorage.removeItem('tempSignupData');
+          localStorage.removeItem('signupDataExpiry');
+        }
+      }
 
-    localStorage.setItem('onboardingComplete', '1');
-    hideOnboardingModal();
-    window.location.href = 'dashboard.html';
-  });
+      // Login form tracking
+      const loginForm = document.getElementById('loginForm');
+      if (loginForm) {
+        loginForm.addEventListener('submit', function(e) {
+          e.preventDefault();
+          const email = document.getElementById('loginEmail').value;
+          
+          amplitude?.logEvent('login_attempt', { email });
+          mixpanel?.track('login_attempt', { email });
+          gtag('event', 'login_attempt', { email });
 
-  window.addEventListener('DOMContentLoaded', function () {
-    if (window.location.hash === '#show-onboarding' && !localStorage.getItem('onboardingComplete')) {
-      showOnboardingModal();
-    }
-  });
-</script>
+          // Simulate successful login (replace with real auth)
+          setTimeout(() => {
+            amplitude?.logEvent('login_success', { email });
+            mixpanel?.track('login_success', { email });
+            gtag('event', 'login_success', { email });
+            
+            // Redirect to onboarding/dashboard
+            window.location.href = 'dashboard.html#show-onboarding';
+          }, 500);
+        });
+      }
+
+      // Signup link tracking
+      const signupLink = document.getElementById('signupLink');
+      if (signupLink) {
+        signupLink.addEventListener('click', function() {
+          amplitude?.logEvent('signup_link_click');
+          mixpanel?.track('signup_link_click');
+          gtag('event', 'signup_link_click');
+        });
+      }
+
+      // Onboarding functions
+      function showOnboardingModal() {
+        const modal = document.getElementById('onboardingModal');
+        modal.style.display = 'flex';
+        modal.style.alignItems = 'center';
+        modal.style.justifyContent = 'center';
+
+        amplitude?.logEvent('onboarding_started');
+        mixpanel?.track('onboarding_started');
+        gtag('event', 'onboarding_started');
+      }
+
+      function hideOnboardingModal() {
+        document.getElementById('onboardingModal').style.display = 'none';
+      }
+
+      if (window.location.hash === '#show-onboarding' && !localStorage.getItem('onboardingComplete')) {
+        showOnboardingModal();
+      }
+
+      document.getElementById('onboardingForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const genre = this.genre.value;
+        const actor = this.actor.value;
+        const country = this.country.value;
+
+        amplitude?.logEvent('onboarding_step', { step: 'genre', value: genre });
+        mixpanel?.track('onboarding_step', { step: 'genre', value: genre });
+        gtag('event', 'onboarding_step', { step: 'genre', value: genre });
+
+        amplitude?.logEvent('onboarding_step', { step: 'actor', value: actor });
+        mixpanel?.track('onboarding_step', { step: 'actor', value: actor });
+        gtag('event', 'onboarding_step', { step: 'actor', value: actor });
+
+        amplitude?.logEvent('onboarding_step', { step: 'country', value: country });
+        mixpanel?.track('onboarding_step', { step: 'country', value: country });
+        gtag('event', 'onboarding_step', { step: 'country', value: country });
+
+        if (amplitude?.getInstance) {
+          amplitude.getInstance().setUserProperties({
+            onboarding_skipped: false,
+            favorite_genre: genre,
+            favorite_actor: actor,
+            preferred_country: country
+          });
+        }
+
+        amplitude?.logEvent('onboarding_complete', {
+          skipped: false,
+          favorite_genre: genre,
+          favorite_actor: actor,
+          preferred_country: country
+        });
+        
+        mixpanel?.track('onboarding_complete', {
+          skipped: false,
+          favorite_genre: genre,
+          favorite_actor: actor,
+          preferred_country: country
+        });
+        
+        gtag('event', 'onboarding_complete', {
+          skipped: false,
+          favorite_genre: genre,
+          favorite_actor: actor,
+          preferred_country: country
+        });
+
+        localStorage.setItem('onboardingComplete', '1');
+        hideOnboardingModal();
+        window.location.href = 'dashboard.html';
+      });
+
+      document.getElementById('skipOnboarding').addEventListener('click', function(e) {
+        e.preventDefault();
+
+        if (amplitude?.getInstance) {
+          amplitude.getInstance().setUserProperties({
+            onboarding_skipped: true
+          });
+        }
+
+        amplitude?.logEvent('onboarding_skip');
+        mixpanel?.track('onboarding_skip');
+        gtag('event', 'onboarding_skip');
+
+        amplitude?.logEvent('onboarding_complete', { skipped: true });
+        mixpanel?.track('onboarding_complete', { skipped: true });
+        gtag('event', 'onboarding_complete', { skipped: true });
+
+        localStorage.setItem('onboardingComplete', '1');
+        hideOnboardingModal();
+        window.location.href = 'dashboard.html';
+      });
+    });
+  </script>
 </body>
 </html>
