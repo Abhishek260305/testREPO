@@ -293,6 +293,25 @@
         amplitude.logEvent('movie_click', { movie: title });
       }
     }
+
+    function setThriveStackUser(userId, userEmail) {
+      if (typeof thriveStack !== 'undefined' && typeof thriveStack.setUser === 'function') {
+        thriveStack.setUser(userId, userEmail);
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // Check if user is logged in
+      const userEmail = sessionStorage.getItem('signupEmail');
+      let userId = null;
+      if (userEmail) {
+        let userIdKey = `user_id_${userEmail}`;
+        userId = localStorage.getItem(userIdKey);
+        if (userId && userEmail) {
+          setThriveStackUser(userId, userEmail);
+        }
+      }
+    });
   </script>
 </body>
 </html> 
