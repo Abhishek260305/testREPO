@@ -360,6 +360,51 @@ function trackFeatureAndThriveStack(feature, userRole) {
   }
 }
 
+// ---------- Analytics & Tracking Utilities ----------
+
+// ThriveStack initialization check
+if (typeof thriveStack === 'undefined') {
+  console.warn('ThriveStack not loaded - analytics will be limited');
+}
+
+// Utility: Get user/device context
+function getUserContext() {
+  return {
+    user_id: sessionStorage.getItem('signupEmail') || 'anonymous_user',
+    device_id: localStorage.getItem('device_id') || 'anonymous_device_' + Math.random().toString(36).substring(2),
+  };
+}
+
+// Utility: Safe ThriveStack batch event
+function safeTrack(events) {
+  if (!Array.isArray(events)) {
+    console.error('thriveStack.track expected an array, got:', events);
+    return;
+  }
+  if (typeof thriveStack !== 'undefined' && typeof thriveStack.track === 'function') {
+    thriveStack.track(events);
+  }
+}
+
+// Unified event tracking for all providers
+function trackEvent(eventName, properties = {}) {
+  const context = getUserContext();
+  // ThriveStack
+  safeTrack([
+    {
+      event_name: eventName,
+      properties,
+      context
+    }
+  ]);
+  // Google Analytics
+  if (typeof gtag === 'function') {
+    gtag('event', eventName, properties);
+  }
+  // Add other providers here if needed (amplitude, mixpanel, etc)
+}
+
+// Throttle utility
 function throttle(func, limit) {
   let inThrottle;
   return function () {
@@ -371,138 +416,80 @@ function throttle(func, limit) {
   };
 }
 
-// Attach scroll listener with throttle
-document.addEventListener('scroll', throttle(trackScrollDepth, 500));
-
-document.querySelectorAll('.btn-feature').forEach(btn => {
-  btn.addEventListener('click', e => {
-    if (!e.target.dataset.feature) return;
-    const feature = e.target.dataset.feature || 'unknown_feature';
-    const userRole = e.target.dataset.role || 'guest';
-    trackFeatureAndThriveStack(feature, userRole);
+// DOMContentLoaded: All DOM-dependent event listeners
+// (prevents errors if elements are not yet loaded)
+document.addEventListener('DOMContentLoaded', () => {
+  // Feature button tracking
+  const featureButtons = document.querySelectorAll('[data-feature]');
+  featureButtons.forEach(button => {
+    button.addEventListener('click', () => {
+      const feature = button.getAttribute('data-feature');
+      const userRole = button.getAttribute('data-role') || 'guest';
+      if (feature) trackEvent('feature_used', { feature_name: feature, user_role: userRole });
+    });
   });
-});
 
-// Optional: track user properties safely if defined
-if (typeof genre !== 'undefined' && typeof actor !== 'undefined' && typeof country !== 'undefined') {
-  setThriveStackUserProperties({
-    favorite_genre: genre,
-    favorite_actor: actor,
-    preferred_country: country
-  });
-}
-
-function trackError(errorType, errorMessage) {
-  if (typeof amplitude !== 'undefined') {
-    amplitude.logEvent('error_event', {
-      error_type: errorType,
-      error_message: errorMessage,
-      page: window.location.pathname
+  // Login tracking
+  const loginForm = document.getElementById('loginForm');
+  if (loginForm) {
+    loginForm.addEventListener('submit', function (e) {
+      e.preventDefault();
+      const email = document.getElementById('loginEmail').value;
+      const password = document.getElementById('loginPassword').value;
+      const storedEmail = sessionStorage.getItem('signupEmail');
+      const storedPassword = sessionStorage.getItem('signupPassword');
+      if (email === storedEmail && password === storedPassword) {
+        trackEvent('login_success', { email });
+        window.location.href = 'dashboard.html';
+      } else {
+        trackEvent('login_failed', { email });
+        alert('Invalid credentials. Please try again or sign up.');
+      }
     });
   }
-  if (typeof thriveStack !== 'undefined' && typeof thriveStack.track === 'function') {
-    const userId = getCurrentUserId();
-    const accountId = getCurrentAccountId();
-    thriveStack.track([
-      {
-        event_name: 'error_event',
-        properties: {
-          error_type: errorType,
-          error_message: errorMessage,
-          page: window.location.pathname
-        },
-        user_id: userId,
-        timestamp: new Date().toISOString(),
-        context: accountId ? { group_id: accountId } : undefined
-      }
-    ]);
-  }
-}
-// Example usage:
-trackError('signup_failed', 'Email already exists');
 
-function trackCrash(errorType) {
-  if (typeof amplitude !== 'undefined') {
-    console.log("Hi")
-    amplitude.logEvent('crash_event', {
-      error_type: errorType,
-      device: navigator.userAgent,
-      os: navigator.platform
-    });
-  }
-  if (typeof thriveStack !== 'undefined' && typeof thriveStack.track === 'function') {
-    const userId = getCurrentUserId();
-    const accountId = getCurrentAccountId();
-    thriveStack.track([
-      {
-        event_name: 'crash_event',
-        properties: {
-          error_type: errorType,
-          device: navigator.userAgent,
-          os: navigator.platform
-        },
-        user_id: userId,
-        timestamp: new Date().toISOString(),
-        context: accountId ? { group_id: accountId } : undefined
-      }
-    ]);
-  }
-}
+  // Video interaction tracking
+  document.querySelectorAll('.btn-like').forEach(btn =>
+    btn.addEventListener('click', () => {
+      trackEvent('video_like', { label: 'Like Clicked' });
+    })
+  );
+  document.querySelectorAll('.btn-dislike').forEach(btn =>
+    btn.addEventListener('click', () => {
+      trackEvent('video_dislike', { label: 'Dislike Clicked' });
+    })
+  );
+  document.querySelectorAll('.btn-play').forEach(btn =>
+    btn.addEventListener('click', () => {
+      trackEvent('video_play', { label: 'Play Clicked' });
+    })
+  );
+  document.querySelectorAll('.btn-pause').forEach(btn =>
+    btn.addEventListener('click', () => {
+      trackEvent('video_pause', { label: 'Pause Clicked' });
+    })
+  );
 
-function trackSupportTicket(page, feature) {
-  if (typeof amplitude !== 'undefined') {
-    amplitude.logEvent('support_ticket_created', { page, feature });
-  }
-  if (typeof thriveStack !== 'undefined' && typeof thriveStack.track === 'function') {
-    const userId = getCurrentUserId();
-    const accountId = getCurrentAccountId();
-    thriveStack.track([
-      {
-        event_name: 'support_ticket_created',
-        properties: { page, feature },
-        user_id: userId,
-        timestamp: new Date().toISOString(),
-        context: accountId ? { group_id: accountId } : undefined
-      }
-    ]);
-  }
-}
-
-console.log("Debug")
-
-// Scroll depth tracking with batch format for ThriveStack
-let maxScrollDepth = 0;
-window.addEventListener('scroll', () => {
-  const scrollTop = window.scrollY;
-  const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-  if (docHeight > 0) {
-    const percent = Math.round((scrollTop / docHeight) * 100);
-    if (percent > maxScrollDepth) {
-      maxScrollDepth = percent;
-      [25, 50, 75, 100].forEach(threshold => {
-        if (percent >= threshold && !window[`amplitude_scroll_${threshold}`]) {
-          window[`amplitude_scroll_${threshold}`] = true;
-          if (typeof amplitude !== 'undefined') {
-            amplitude.logEvent('scroll_depth', { percent: threshold, page: window.location.pathname });
-          }
-          if (typeof thriveStack !== 'undefined' && typeof thriveStack.track === 'function') {
-            const userId = getCurrentUserId();
-            const accountId = getCurrentAccountId();
-            thriveStack.track([
-              {
-                event_name: 'scroll_depth',
-                properties: { percent: threshold, page: window.location.pathname },
-                user_id: userId,
-                timestamp: new Date().toISOString(),
-                context: accountId ? { group_id: accountId } : undefined
-              }
-            ]);
-          }
-        }
-      });
+  // Optional: user properties (only if defined)
+  if (typeof genre !== 'undefined' || typeof actor !== 'undefined' || typeof country !== 'undefined') {
+    const properties = {};
+    if (typeof genre !== 'undefined') properties.favorite_genre = genre;
+    if (typeof actor !== 'undefined') properties.favorite_actor = actor;
+    if (typeof country !== 'undefined') properties.preferred_country = country;
+    if (Object.keys(properties).length > 0) {
+      trackEvent('user_context_set', properties);
     }
   }
 });
+
+// Throttled scroll tracking (single handler)
+const trackScroll = throttle(() => {
+  const scrollPercent = Math.round(
+    (window.scrollY + window.innerHeight) / document.body.scrollHeight * 100
+  );
+  trackEvent('scroll_depth', { percent: scrollPercent });
+}, 500);
+window.addEventListener('scroll', trackScroll);
 
 // ---------- Onboarding Event Tracking for Amplitude ----------
 function trackOnboardingStart() {
