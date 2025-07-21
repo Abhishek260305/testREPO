@@ -849,8 +849,11 @@ trackOnboardingStep('add_payment');
 trackOnboardingComplete();
 trackOnboardingSkip();
 // Onboarding user properties
-setThriveStackUserProperties({ favorite_genre: genre, favorite_actor: actor, preferred_country: country });
-
+setThriveStackUserProperties({
+  favorite_genre: genre || 'unknown',
+  favorite_actor: actor || 'unknown',
+  preferred_country: country || 'unknown'
+});
 // ---------- ThriveStack Advanced Event Tracking ----------
 function trackThriveStackAccountAddedUser({ accountName, userEmail, userId, accountId }) {
   if (typeof thriveStack !== 'undefined' && typeof thriveStack.track === 'function') {
