@@ -360,18 +360,6 @@ function trackFeatureAndThriveStack(feature, userRole) {
   }
 }
 
-function trackScrollDepth() {
-  const scrollY = (window.scrollY + window.innerHeight) / document.body.scrollHeight * 100;
-  // Only keep scroll tracking for other analytics, not for ThriveStack
-  [25, 50, 75, 100].forEach(threshold => {
-    if (scrollY >= threshold && !window[`scroll_${threshold}`]) {
-      window[`scroll_${threshold}`] = true;
-      // (Remove thriveStack.track for scroll events)
-      // If you want to keep Amplitude or Mixpanel scroll tracking, do it here
-    }
-  });
-}
-
 function throttle(func, limit) {
   let inThrottle;
   return function () {
@@ -972,3 +960,90 @@ function trackThriveStackInviteSent({ featureName, inviteeEmail, inviteeRole, in
 // trackThriveStackAccountAddedUser({ accountName: 'Acme', userEmail: 'john.doe@acme.xyz', userId: '18f716ac-37a4-464f-adb7-3cc30032308c', accountId: 'ac8db7ba-5139-4911-ba6e-523fd9c4704b' });
 // trackThriveStackFeatureUsed({ featureName: 'export_report', userRole: 'admin', userId: '18f716ac-37a4-464f-adb7-3cc30032308c', accountId: 'ac8db7ba-5139-4911-ba6e-523fd9c4704b' });
 // trackThriveStackInviteSent({ featureName: 'report', inviteeEmail: 'jane.doe@acme.xyz', inviteeRole: 'Admin', inviteeRoleId: 'ADMIN', inviteeTeamId: '6d56db83-509d-4764-a929-ab886ff929e0', inviteeTeam: 'Finance Team', inviteeUserId: 'ed1adb3a-9772-48ef-b620-e5e6d438fb82', subFeatureName: 'export_report', sourceUrl: 'https://yourDomainName.com/dashboard', userId: '18f716ac-37a4-464f-adb7-3cc30032308c', accountId: 'ac8db7ba-5139-4911-ba6e-523fd9c4704b' });
+
+// ---------- ThriveStack Batch Event Tracking (Fixed) ----------
+function getUserContext() {
+  // Replace with your actual user/device ID logic
+  return {
+    user_id: sessionStorage.getItem('signupEmail') || 'anonymous_user',
+    device_id: localStorage.getItem('device_id') || 'anonymous_device_' + Math.random().toString(36).substring(2),
+  };
+}
+
+function trackScrollDepth(scrollDepth) {
+  if (typeof thriveStack !== 'undefined' && typeof thriveStack.track === 'function') {
+    thriveStack.track([
+      {
+        event: 'scroll_depth',
+        properties: {
+          percent: scrollDepth,
+        },
+        context: getUserContext(),
+      },
+    ]);
+  }
+}
+
+function trackOnboardingStart() {
+  if (typeof thriveStack !== 'undefined' && typeof thriveStack.track === 'function') {
+    thriveStack.track([
+      {
+        event: 'onboarding_start',
+        properties: {},
+        context: getUserContext(),
+      },
+    ]);
+  }
+}
+
+function trackOnboardingStep(stepNumber) {
+  if (typeof thriveStack !== 'undefined' && typeof thriveStack.track === 'function') {
+    thriveStack.track([
+      {
+        event: 'onboarding_step',
+        properties: {
+          step: stepNumber,
+        },
+        context: getUserContext(),
+      },
+    ]);
+  }
+}
+
+function trackOnboardingComplete() {
+  if (typeof thriveStack !== 'undefined' && typeof thriveStack.track === 'function') {
+    thriveStack.track([
+      {
+        event: 'onboarding_complete',
+        properties: {},
+        context: getUserContext(),
+      },
+    ]);
+  }
+}
+
+function trackOnboardingSkip() {
+  if (typeof thriveStack !== 'undefined' && typeof thriveStack.track === 'function') {
+    thriveStack.track([
+      {
+        event: 'onboarding_skip',
+        properties: {},
+        context: getUserContext(),
+      },
+    ]);
+  }
+}
+
+// Usage example: attach to scroll listener
+window.addEventListener('scroll', function () {
+  const scrollPercent =
+    (window.scrollY + window.innerHeight) / document.body.scrollHeight;
+  trackScrollDepth(Math.round(scrollPercent * 100));
+});
+
+// Usage example: onboarding flow (call these at appropriate times)
+// trackOnboardingStart();
+// trackOnboardingStep(1);
+// trackOnboardingStep(2);
+// trackOnboardingComplete();
+// trackOnboardingSkip(); // Uncomment if skip is triggered
