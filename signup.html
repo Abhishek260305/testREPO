@@ -99,6 +99,7 @@
         const password = passwordInput.value;
         const timestamp = new Date().toISOString();
         const userId = crypto.randomUUID(); // Generate unique user ID
+        const accountId = 'netflixx-acc-' + crypto.randomUUID(); // Generate account ID
 
         // Track submission attempt
         if (typeof amplitude !== 'undefined') amplitude.logEvent('signup_submitted', { email });
@@ -115,44 +116,65 @@
         // Save to session storage
         sessionStorage.setItem('signupEmail', email);
         sessionStorage.setItem('signupPassword', password);
-        sessionStorage.setItem('userId', userId); // Store for future tracking
+        sessionStorage.setItem('userId', userId);
+        localStorage.setItem('thriveStackAccountId', accountId); // Store account ID long-term
 
         // Track success with all analytics platforms
         if (typeof amplitude !== 'undefined') amplitude.logEvent('signup_success', { email });
         if (typeof mixpanel !== 'undefined') mixpanel.track('signup_success', { email });
 
         // ThriveStack tracking
-          console.log("[DEBUG] Checking ThriveStack availability:", {
-    exists: typeof window.thriveStack !== 'undefined',
-    hasTrack: window.thriveStack?.track ? true : false
-  });
+        console.log("[DEBUG] Checking ThriveStack availability:", {
+          exists: typeof window.thriveStack !== 'undefined',
+          hasTrack: window.thriveStack?.track ? true : false
+        });
 
-  if (window.thriveStack?.track) {
-    const eventData = {
-      "event_name": "signed_up",
-      "properties": {
-        "user_email": email,
-        "user_name": email.split('@')[0],
-        "utm_campaign": "customer_success",
-        "utm_medium": "referral",
-        "utm_source": "twitter",
-        "utm_term": "free_trial"
-      },
-      "user_id": userId,
-      "timestamp": timestamp
-    };
+        if (window.thriveStack?.track) {
+          try {
+            // 1. Track user signup
+            const signupEvent = {
+              "event_name": "signed_up",
+              "properties": {
+                "user_email": email,
+                "user_name": email.split('@')[0],
+                "utm_campaign": "customer_success",
+                "utm_medium": "referral",
+                "utm_source": "twitter",
+                "utm_term": "free_trial"
+              },
+              "user_id": userId,
+              "timestamp": timestamp
+            };
+            
+            console.log("[DEBUG] Sending signup event to ThriveStack:", signupEvent);
+            window.thriveStack.track([signupEvent]);
 
-    console.log("[DEBUG] Sending to ThriveStack:", eventData);
-    
-    try {
-      window.thriveStack.track([eventData]);
-      console.log("[DEBUG] ThriveStack track succeeded");
-    } catch (e) {
-      console.error("[DEBUG] ThriveStack track error:", e);
-    }
-  } else {
-    console.warn("[DEBUG] ThriveStack not available for tracking");
-  }
+            // 2. Track account creation
+            const accountEvent = {
+              "event_name": "account_created",
+              "properties": {
+                "account_domain": window.location.hostname,
+                "account_id": accountId,
+                "account_name": email.split('@')[0] + "'s Account"
+              },
+              "user_id": userId,
+              "timestamp": timestamp,
+              "context": {
+                "group_id": accountId  // Matches account_id
+              }
+            };
+            
+            console.log("[DEBUG] Sending account creation to ThriveStack:", accountEvent);
+            window.thriveStack.track([accountEvent]);
+
+            console.log("[DEBUG] Both ThriveStack events sent successfully");
+
+          } catch (e) {
+            console.error("[DEBUG] ThriveStack tracking error:", e);
+          }
+        } else {
+          console.warn("[DEBUG] ThriveStack not available for tracking");
+        }
 
         alert('Signup successful! Please login.');
         window.location.href = 'index.html#show-onboarding';
