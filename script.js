@@ -314,13 +314,22 @@ if (typeof thriveStack !== 'undefined' && utms.utm_source) {
   setThriveStackUserProperties(utms);
 }
 
-// ---------- ThriveStack Cleaned and Fixed Tracking ----------
+// ---------- ThriveStack Cleaned and Fixed with Scroll Tracking Context Fix ----------
 function getCurrentUserId() {
   return sessionStorage.getItem("signupEmail") || "anonymous_user";
 }
 
 function getCurrentAccountId() {
   return sessionStorage.getItem("accountId") || "default_account";
+}
+
+function getDeviceId() {
+  let id = localStorage.getItem("device_id");
+  if (!id) {
+    id = 'dev_' + crypto.randomUUID();
+    localStorage.setItem("device_id", id);
+  }
+  return id;
 }
 
 function setThriveStackUserProperties(properties) {
@@ -353,6 +362,9 @@ function trackFeatureAndThriveStack(feature, userRole) {
 
 function trackScrollDepth() {
   const scrollY = (window.scrollY + window.innerHeight) / document.body.scrollHeight * 100;
+  const userId = getCurrentUserId();
+  const deviceId = getDeviceId();
+  const accountId = getCurrentAccountId();
 
   [25, 50, 75, 100].forEach(threshold => {
     if (scrollY >= threshold && !window[`scroll_${threshold}`]) {
@@ -366,7 +378,12 @@ function trackScrollDepth() {
               percent: threshold,
               page: window.location.pathname
             },
-            timestamp: new Date().toISOString()
+            user_id: userId || undefined,
+            timestamp: new Date().toISOString(),
+            context: {
+              device_id: userId ? undefined : deviceId,
+              group_id: accountId
+            }
           }
         ]);
       }
@@ -374,13 +391,23 @@ function trackScrollDepth() {
   });
 }
 
-// Example usage:
-document.addEventListener('scroll', () => {
-  trackScrollDepth();
-});
+function throttle(func, limit) {
+  let inThrottle;
+  return function () {
+    if (!inThrottle) {
+      func.apply(this, arguments);
+      inThrottle = true;
+      setTimeout(() => inThrottle = false, limit);
+    }
+  };
+}
+
+// Attach scroll listener with throttle
+document.addEventListener('scroll', throttle(trackScrollDepth, 500));
 
 document.querySelectorAll('.btn-feature').forEach(btn => {
   btn.addEventListener('click', e => {
+    if (!e.target.dataset.feature) return;
     const feature = e.target.dataset.feature || 'unknown_feature';
     const userRole = e.target.dataset.role || 'guest';
     trackFeatureAndThriveStack(feature, userRole);
