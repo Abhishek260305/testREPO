@@ -378,11 +378,21 @@ function trackError(errorType, errorMessage) {
     });
   }
   if (typeof thriveStack !== 'undefined' && typeof thriveStack.track === 'function') {
-    thriveStack.track('error_event', {
-      error_type: errorType,
-      error_message: errorMessage,
-      page: window.location.pathname
-    });
+    const userId = getCurrentUserId();
+    const accountId = getCurrentAccountId();
+    thriveStack.track([
+      {
+        event_name: 'error_event',
+        properties: {
+          error_type: errorType,
+          error_message: errorMessage,
+          page: window.location.pathname
+        },
+        user_id: userId,
+        timestamp: new Date().toISOString(),
+        context: accountId ? { group_id: accountId } : undefined
+      }
+    ]);
   }
 }
 // Example usage:
@@ -398,11 +408,21 @@ function trackCrash(errorType) {
     });
   }
   if (typeof thriveStack !== 'undefined' && typeof thriveStack.track === 'function') {
-    thriveStack.track('crash_event', {
-      error_type: errorType,
-      device: navigator.userAgent,
-      os: navigator.platform
-    });
+    const userId = getCurrentUserId();
+    const accountId = getCurrentAccountId();
+    thriveStack.track([
+      {
+        event_name: 'crash_event',
+        properties: {
+          error_type: errorType,
+          device: navigator.userAgent,
+          os: navigator.platform
+        },
+        user_id: userId,
+        timestamp: new Date().toISOString(),
+        context: accountId ? { group_id: accountId } : undefined
+      }
+    ]);
   }
 }
 
@@ -411,12 +431,23 @@ function trackSupportTicket(page, feature) {
     amplitude.logEvent('support_ticket_created', { page, feature });
   }
   if (typeof thriveStack !== 'undefined' && typeof thriveStack.track === 'function') {
-    thriveStack.track('support_ticket_created', { page, feature });
+    const userId = getCurrentUserId();
+    const accountId = getCurrentAccountId();
+    thriveStack.track([
+      {
+        event_name: 'support_ticket_created',
+        properties: { page, feature },
+        user_id: userId,
+        timestamp: new Date().toISOString(),
+        context: accountId ? { group_id: accountId } : undefined
+      }
+    ]);
   }
 }
 
 console.log("Debug")
 
+// Scroll depth tracking with batch format for ThriveStack
 let maxScrollDepth = 0;
 window.addEventListener('scroll', () => {
   const scrollTop = window.scrollY;
@@ -425,19 +456,28 @@ window.addEventListener('scroll', () => {
     const percent = Math.round((scrollTop / docHeight) * 100);
     if (percent > maxScrollDepth) {
       maxScrollDepth = percent;
-      // Fire events at 25%, 50%, 75%, 100%
       [25, 50, 75, 100].forEach(threshold => {
         if (percent >= threshold && !window[`amplitude_scroll_${threshold}`]) {
           window[`amplitude_scroll_${threshold}`] = true;
           if (typeof amplitude !== 'undefined') {
             amplitude.logEvent('scroll_depth', { percent: threshold, page: window.location.pathname });
           }
+          if (typeof thriveStack !== 'undefined' && typeof thriveStack.track === 'function') {
+            const userId = getCurrentUserId();
+            const accountId = getCurrentAccountId();
+            thriveStack.track([
+              {
+                event_name: 'scroll_depth',
+                properties: { percent: threshold, page: window.location.pathname },
+                user_id: userId,
+                timestamp: new Date().toISOString(),
+                context: accountId ? { group_id: accountId } : undefined
+              }
+            ]);
+          }
         }
       });
     }
-  }
-  if (typeof thriveStack !== 'undefined' && typeof thriveStack.track === 'function') {
-    thriveStack.track('scroll_depth', { percent: percent, page: window.location.pathname });
   }
 });
 
@@ -818,29 +858,6 @@ trackFeatureAndThriveStack('add_to_watchlist', 'user');
 trackError('signup_failed', 'Email already exists');
 trackCrash('signup_failed');
 trackSupportTicket('signup_page', 'signup_failed');
-// Scroll depth
-window.addEventListener('scroll', () => {
-  const scrollTop = window.scrollY;
-  const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-  if (docHeight > 0) {
-    const percent = Math.round((scrollTop / docHeight) * 100);
-    if (percent > maxScrollDepth) {
-      maxScrollDepth = percent;
-      // Fire events at 25%, 50%, 75%, 100%
-      [25, 50, 75, 100].forEach(threshold => {
-        if (percent >= threshold && !window[`amplitude_scroll_${threshold}`]) {
-          window[`amplitude_scroll_${threshold}`] = true;
-          if (typeof amplitude !== 'undefined') {
-            amplitude.logEvent('scroll_depth', { percent: threshold, page: window.location.pathname });
-          }
-        }
-      });
-      if (typeof thriveStack !== 'undefined' && typeof thriveStack.track === 'function') {
-        thriveStack.track('scroll_depth', { percent: threshold, page: window.location.pathname });
-      }
-    }
-  }
-});
 // Onboarding events
 trackOnboardingStart();
 trackOnboardingStep('profile_setup');
