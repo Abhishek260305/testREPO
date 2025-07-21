@@ -207,42 +207,40 @@
             }]);
           }
 // Track account creation
-if (window.thriveStack && !localStorage.getItem('accountCreatedTracked')) {
-    // Generate ONCE and reuse
+if (window.thriveStack?.track && !localStorage.getItem('accountCreatedTracked')) {
     const accountId = "netflixx-account-" + crypto.randomUUID();
-    const userId = signupData.userId || crypto.randomUUID();
-    
-    // 1. Create account
+    const userId = signupData.userId || crypto.randomUUID(); // Ensure this is consistent
+
+    // 1. Track Account Creation
     window.thriveStack.track([{
         "event_name": "account_created",
         "properties": {
-            "account_domain": "netflixx.com",
-            "account_id": accountId, // Use stored ID
+            "account_domain": window.location.hostname, // Dynamic
+            "account_id": accountId,
             "account_name": signupData.email.split('@')[0] + "'s Account"
         },
         "user_id": userId,
         "timestamp": new Date().toISOString(),
         "context": {
-            "group_id": accountId // Same as account_id
+            "group_id": accountId // Matches account_id
         }
     }]);
 
-    // 2. Associate user (immediately after)
+    // 2. Track User-Company Association
     window.thriveStack.track([{
         "event_name": "account_added_user",
         "properties": {
             "account_name": signupData.email.split('@')[0] + "'s Account",
             "user_email": signupData.email
         },
-        "user_id": userId, // Same user_id
+        "user_id": userId, // Same as above
         "timestamp": new Date().toISOString(),
         "context": {
-            "group_id": accountId // MUST match account_id
+            "group_id": accountId // Same as account_id
         }
     }]);
 
     localStorage.setItem('accountCreatedTracked', 'true');
-    localStorage.setItem('userCompanyAssociated', 'true');
 }
           
           // Track with other analytics
