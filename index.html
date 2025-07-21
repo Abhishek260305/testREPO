@@ -212,6 +212,7 @@ if (window.thriveStack?.track && !localStorage.getItem('accountCreatedTracked'))
     const userId = signupData.userId || crypto.randomUUID(); // Ensure this is consistent
 
     // 1. Track Account Creation
+    console.log("create")
 window.thriveStack.track([{
         "event_name": "account_created",
         "properties": {
