@@ -207,36 +207,32 @@
             }]);
           }
 // Track account creation
-if (window.thriveStack?.track && !localStorage.getItem('accountCreatedTracked')) {
-    const accountId = "netflixx-account-" + crypto.randomUUID();
-    const userId = signupData.userId || crypto.randomUUID(); // Ensure this is consistent
-
-    // 1. Track Account Creation
-    window.thriveStack.track([{
+window.thriveStack.track([{
         "event_name": "account_created",
         "properties": {
-            "account_domain": window.location.hostname, // Dynamic
-            "account_id": accountId,
-            "account_name": signupData.email.split('@')[0] + "'s Account"
+            "account_domain": "acme.xyz",
+            "account_id": "ac8db7ba-5139-4911-ba6e-523fd9c4704b",
+            "account_name": "Acme"
         },
-        "user_id": userId,
-        "timestamp": new Date().toISOString(),
+        "user_id": "18f716ac-37a4-464f-adb7-3cc30032308c",
+        "timestamp": "2025-07-21T11:42:48.211Z",
         "context": {
-            "group_id": accountId // Matches account_id
+            "group_id": "ac8db7ba-5139-4911-ba6e-523fd9c4704b"  // Ensure this matches the account_id used in the event_name
         }
     }]);
+    
 
     // 2. Track User-Company Association
-    window.thriveStack.track([{
+window.thriveStack.track([{
         "event_name": "account_added_user",
         "properties": {
-            "account_name": signupData.email.split('@')[0] + "'s Account",
-            "user_email": signupData.email
+            "account_name": "Acme",
+            "user_email": "john.doe@acme.xyz"
         },
-        "user_id": userId, // Same as above
-        "timestamp": new Date().toISOString(),
+        "user_id": "18f716ac-37a4-464f-adb7-3cc30032308c",
+        "timestamp": "2025-07-21T11:42:58.914Z",
         "context": {
-            "group_id": accountId // Same as account_id
+            "group_id": "ac8db7ba-5139-4911-ba6e-523fd9c4704b"
         }
     }]);
 
