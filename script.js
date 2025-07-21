@@ -362,31 +362,12 @@ function trackFeatureAndThriveStack(feature, userRole) {
 
 function trackScrollDepth() {
   const scrollY = (window.scrollY + window.innerHeight) / document.body.scrollHeight * 100;
-  const userId = getCurrentUserId();
-  const deviceId = getDeviceId();
-  const accountId = getCurrentAccountId();
-
+  // Only keep scroll tracking for other analytics, not for ThriveStack
   [25, 50, 75, 100].forEach(threshold => {
     if (scrollY >= threshold && !window[`scroll_${threshold}`]) {
       window[`scroll_${threshold}`] = true;
-
-      if (typeof thriveStack !== 'undefined' && typeof thriveStack.track === 'function') {
-        thriveStack.track([
-          {
-            event_name: 'scroll_depth',
-            properties: {
-              percent: threshold,
-              page: window.location.pathname
-            },
-            user_id: userId || undefined,
-            timestamp: new Date().toISOString(),
-            context: {
-              device_id: userId ? undefined : deviceId,
-              group_id: accountId
-            }
-          }
-        ]); // Always batch format
-      }
+      // (Remove thriveStack.track for scroll events)
+      // If you want to keep Amplitude or Mixpanel scroll tracking, do it here
     }
   });
 }
