@@ -314,45 +314,60 @@ if (typeof thriveStack !== 'undefined' && utms.utm_source) {
   setThriveStackUserProperties(utms);
 }
 
-document.querySelectorAll('.btn-cta').forEach(btn => {
-  btn.addEventListener('click', () => {
-    if (typeof amplitude !== 'undefined') {
-      amplitude.logEvent('cta_click', { location: window.location.pathname });
-    }
-    if (typeof thriveStack !== 'undefined' && typeof thriveStack.track === 'function') {
-      thriveStack.track('cta_click', { location: window.location.pathname });
-    }
-  });
-});
+// Helper to get current userId and accountId from localStorage
+function getCurrentUserId() {
+  // Try to get the most recent user_id from localStorage
+  const email = sessionStorage.getItem('signupEmail');
+  if (!email) return null;
+  return localStorage.getItem(`user_id_${email}`);
+}
+function getCurrentAccountId() {
+  const email = sessionStorage.getItem('signupEmail');
+  if (!email) return null;
+  return localStorage.getItem(`account_id_${email}`);
+}
 
-document.querySelectorAll('.poster').forEach(el => {
-  el.addEventListener('click', () => {
-    amplitude.logEvent('content_click', { content_type: 'poster' });
-    if (typeof thriveStack !== 'undefined' && typeof thriveStack.track === 'function') {
-      thriveStack.track('content_click', { content_type: 'poster' });
-    }
-  });
-});
-document.querySelectorAll('.trailer').forEach(el => {
-  el.addEventListener('click', () => {
-    amplitude.logEvent('content_click', { content_type: 'trailer' });
-    if (typeof thriveStack !== 'undefined' && typeof thriveStack.track === 'function') {
-      thriveStack.track('content_click', { content_type: 'trailer' });
-    }
-  });
-});
-
-function trackFeatureUse(feature) {
+// Update feature use and button click handlers to use ThriveStack batch format
+function trackFeatureAndThriveStack(feature, userRole) {
+  // Amplitude
   if (typeof amplitude !== 'undefined') {
-    amplitude.logEvent('feature_used', { feature_name: feature });
+    amplitude.logEvent('feature_used', { feature_name: feature, user_role: userRole });
   }
-  if (typeof thriveStack !== 'undefined' && typeof thriveStack.track === 'function') {
-    thriveStack.track('feature_used', { feature_name: feature });
+  // Mixpanel
+  if (typeof mixpanel !== 'undefined') {
+    mixpanel.track('feature_used', { feature_name: feature, user_role: userRole });
+  }
+  // ThriveStack
+  const userId = getCurrentUserId();
+  const accountId = getCurrentAccountId();
+  if (typeof thriveStack !== 'undefined' && typeof thriveStack.track === 'function' && userId && accountId) {
+    thriveStack.track([
+      {
+        event_name: 'feature_used',
+        properties: {
+          feature_name: feature,
+          user_role: userRole
+        },
+        user_id: userId,
+        timestamp: new Date().toISOString(),
+        context: {
+          group_id: accountId
+        }
+      }
+    ]);
   }
 }
-// Example usage:
-trackFeatureUse('watch_trailer');
-trackFeatureUse('add_to_watchlist');
+
+// Example: Attach to all .btn-cta, .btn-login, .btn-card, .btn-like, .btn-dislike, .btn-play, .btn-pause, .poster, .trailer
+[...document.querySelectorAll('.btn-cta, .btn-login, .btn-card, .btn-like, .btn-dislike, .btn-play, .btn-pause, .poster, .trailer')].forEach(btn => {
+  btn.addEventListener('click', function(e) {
+    let feature = btn.getAttribute('data-feature') || btn.className || btn.innerText || 'unknown';
+    let userRole = sessionStorage.getItem('userRole') || 'user';
+    trackFeatureAndThriveStack(feature, userRole);
+  });
+});
+
+// If you have other custom feature use points, call trackFeatureAndThriveStack('feature_name', 'user_role')
 
 function trackError(errorType, errorMessage) {
   if (typeof amplitude !== 'undefined') {
@@ -797,8 +812,8 @@ document.querySelectorAll('.trailer').forEach(el => {
   });
 });
 // Feature use
-trackFeatureUse('watch_trailer');
-trackFeatureUse('add_to_watchlist');
+trackFeatureAndThriveStack('watch_trailer', 'user');
+trackFeatureAndThriveStack('add_to_watchlist', 'user');
 // Error/Crash/Support
 trackError('signup_failed', 'Email already exists');
 trackCrash('signup_failed');
