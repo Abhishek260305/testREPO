@@ -126,10 +126,12 @@
         // ThriveStack tracking
         console.log("[DEBUG] Checking ThriveStack availability:", {
           exists: typeof window.thriveStack !== 'undefined',
-          hasTrack: window.thriveStack?.track ? true : false
+          hasTrack: window.thriveStack?.track ? true : false,
+          hasSetUser: window.thriveStack?.setUser ? true : false,
+          hasSetGroup: window.thriveStack?.setGroup ? true : false
         });
 
-        if (window.thriveStack?.track) {
+        if (window.thriveStack) {
           try {
             // 1. Track user signup
             const signupEvent = {
@@ -147,7 +149,9 @@
             };
             
             console.log("[DEBUG] Sending signup event to ThriveStack:", signupEvent);
-            window.thriveStack.track([signupEvent]);
+            if (window.thriveStack.track) {
+              window.thriveStack.track([signupEvent]);
+            }
 
             // 2. Track account creation
             const accountEvent = {
@@ -165,7 +169,9 @@
             };
             
             console.log("[DEBUG] Sending account creation to ThriveStack:", accountEvent);
-            window.thriveStack.track([accountEvent]);
+            if (window.thriveStack.track) {
+              window.thriveStack.track([accountEvent]);
+            }
 
             // 3. Track user-company association
             const userCompanyEvent = {
@@ -182,12 +188,42 @@
             };
             
             console.log("[DEBUG] Sending user-company association to ThriveStack:", userCompanyEvent);
-            window.thriveStack.track([userCompanyEvent]);
+            if (window.thriveStack.track) {
+              window.thriveStack.track([userCompanyEvent]);
+            }
 
-            console.log("[DEBUG] All ThriveStack events sent successfully");
+            // 4. Set user data in ThriveStack
+            console.log("[DEBUG] Attempting to set user data in ThriveStack:", {
+              userId: userId,
+              userEmail: email
+            });
+            if (window.thriveStack.setUser) {
+              window.thriveStack.setUser(userId, email);
+              console.log("[DEBUG] Successfully set user data in ThriveStack");
+            } else {
+              console.warn("[DEBUG] thriveStack.setUser method not available");
+            }
+
+            // 5. Set group data in ThriveStack
+            const groupName = email.split('@')[0] + "'s Account";
+            const groupDomain = window.location.hostname;
+            
+            console.log("[DEBUG] Attempting to set group data in ThriveStack:", {
+              groupId: accountId,
+              groupDomain: groupDomain,
+              groupName: groupName
+            });
+            if (window.thriveStack.setGroup) {
+              window.thriveStack.setGroup(accountId, groupDomain, groupName);
+              console.log("[DEBUG] Successfully set group data in ThriveStack");
+            } else {
+              console.warn("[DEBUG] thriveStack.setGroup method not available");
+            }
+
+            console.log("[DEBUG] All ThriveStack operations completed successfully");
 
           } catch (e) {
-            console.error("[DEBUG] ThriveStack tracking error:", e);
+            console.error("[DEBUG] ThriveStack operation error:", e);
           }
         } else {
           console.warn("[DEBUG] ThriveStack not available for tracking");
