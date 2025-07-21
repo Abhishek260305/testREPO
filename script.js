@@ -979,7 +979,7 @@ function trackScrollDepth(scrollDepth) {
   if (typeof thriveStack !== 'undefined' && typeof thriveStack.track === 'function') {
     thriveStack.track([
       {
-        event: 'scroll_depth',
+        event_name: 'scroll_depth',
         properties: {
           percent: scrollDepth,
         },
@@ -993,7 +993,7 @@ function trackOnboardingStart() {
   if (typeof thriveStack !== 'undefined' && typeof thriveStack.track === 'function') {
     thriveStack.track([
       {
-        event: 'onboarding_start',
+        event_name: 'onboarding_start',
         properties: {},
         context: getUserContext(),
       },
@@ -1005,7 +1005,7 @@ function trackOnboardingStep(stepNumber) {
   if (typeof thriveStack !== 'undefined' && typeof thriveStack.track === 'function') {
     thriveStack.track([
       {
-        event: 'onboarding_step',
+        event_name: 'onboarding_step',
         properties: {
           step: stepNumber,
         },
@@ -1019,7 +1019,7 @@ function trackOnboardingComplete() {
   if (typeof thriveStack !== 'undefined' && typeof thriveStack.track === 'function') {
     thriveStack.track([
       {
-        event: 'onboarding_complete',
+        event_name: 'onboarding_complete',
         properties: {},
         context: getUserContext(),
       },
@@ -1031,7 +1031,7 @@ function trackOnboardingSkip() {
   if (typeof thriveStack !== 'undefined' && typeof thriveStack.track === 'function') {
     thriveStack.track([
       {
-        event: 'onboarding_skip',
+        event_name: 'onboarding_skip',
         properties: {},
         context: getUserContext(),
       },
@@ -1052,3 +1052,85 @@ window.addEventListener('scroll', function () {
 // trackOnboardingStep(2);
 // trackOnboardingComplete();
 // trackOnboardingSkip(); // Uncomment if skip is triggered
+
+// ---------- ThriveStack Safe Batch Event Tracking ----------
+function getUserContext() {
+  return {
+    user_id: sessionStorage.getItem('signupEmail') || 'anonymous_user',
+    device_id: localStorage.getItem('device_id') || 'anonymous_device_' + Math.random().toString(36).substring(2),
+  };
+}
+
+function safeTrack(events) {
+  if (!Array.isArray(events)) {
+    console.error('thriveStack.track expected an array, got:', events);
+    return;
+  }
+  if (typeof thriveStack !== 'undefined' && typeof thriveStack.track === 'function') {
+    thriveStack.track(events);
+  }
+}
+
+function trackFeatureAndThriveStack(feature, userRole) {
+  safeTrack([
+    {
+      event_name: 'feature_used',
+      properties: {
+        feature_name: feature,
+        user_role: userRole
+      },
+      context: getUserContext(),
+    },
+  ]);
+}
+
+// Only keep feature tracking
+const featureButtons = document.querySelectorAll('[data-feature]');
+featureButtons.forEach(button => {
+  button.addEventListener('click', () => {
+    const feature = button.getAttribute('data-feature');
+    const userRole = button.getAttribute('data-role') || 'guest';
+    if (feature) trackFeatureAndThriveStack(feature, userRole);
+  });
+});
+
+// Example: Fix other thriveStack.track calls (login, video_like, etc.)
+document.addEventListener('DOMContentLoaded', () => {
+  const loginForm = document.getElementById('loginForm');
+  if (loginForm) {
+    loginForm.addEventListener('submit', function (e) {
+      e.preventDefault();
+      const email = document.getElementById('loginEmail').value;
+      const password = document.getElementById('loginPassword').value;
+      const storedEmail = sessionStorage.getItem('signupEmail');
+      const storedPassword = sessionStorage.getItem('signupPassword');
+      if (email === storedEmail && password === storedPassword) {
+        safeTrack([{ event_name: 'login_success', properties: { email } }]);
+        window.location.href = 'dashboard.html';
+      } else {
+        safeTrack([{ event_name: 'login_failed', properties: { email } }]);
+        alert('Invalid credentials. Please try again or sign up.');
+      }
+    });
+  }
+  document.querySelectorAll('.btn-like').forEach(btn =>
+    btn.addEventListener('click', () => {
+      safeTrack([{ event_name: 'video_like', properties: { label: 'Like Clicked' } }]);
+    })
+  );
+  document.querySelectorAll('.btn-dislike').forEach(btn =>
+    btn.addEventListener('click', () => {
+      safeTrack([{ event_name: 'video_dislike', properties: { label: 'Dislike Clicked' } }]);
+    })
+  );
+  document.querySelectorAll('.btn-play').forEach(btn =>
+    btn.addEventListener('click', () => {
+      safeTrack([{ event_name: 'video_play', properties: { label: 'Play Clicked' } }]);
+    })
+  );
+  document.querySelectorAll('.btn-pause').forEach(btn =>
+    btn.addEventListener('click', () => {
+      safeTrack([{ event_name: 'video_pause', properties: { label: 'Pause Clicked' } }]);
+    })
+  );
+});
