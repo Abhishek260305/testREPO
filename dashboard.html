@@ -330,6 +330,28 @@
     trackFeatureAndThriveStack('pause', 'user');
     trackFeatureAndThriveStack('like', 'user');
     trackFeatureAndThriveStack('dislike', 'user');
+
+    // Add this helper if not already present
+    function getUserContext() {
+      return {
+        user_id: sessionStorage.getItem('signupEmail') || 'anonymous_user',
+        device_id: localStorage.getItem('device_id') || 'anonymous_device_' + Math.random().toString(36).substring(2),
+      };
+    }
+    function trackFeatureAndThriveStack(feature, userRole) {
+      if (typeof thriveStack !== 'undefined' && typeof thriveStack.track === 'function') {
+        thriveStack.track([
+          {
+            event_name: 'feature_used',
+            properties: {
+              feature_name: feature,
+              user_role: userRole
+            },
+            context: getUserContext(),
+          },
+        ]);
+      }
+    }
   </script>
 </body>
 </html> 
