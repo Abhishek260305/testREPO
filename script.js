@@ -167,6 +167,7 @@ document.querySelectorAll('.btn-like').forEach(btn =>
         event_label: 'Like Clicked'
       });
     }
+    console.log("like")
     if (typeof amplitude !== 'undefined') {
       amplitude.logEvent('video_like', { label: 'Like Clicked' });
     }
