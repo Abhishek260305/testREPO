@@ -173,6 +173,7 @@ document.querySelectorAll('.btn-like').forEach(btn =>
     if (typeof mixpanel !== 'undefined') {
       mixpanel.track('video_like', { label: 'Like Clicked' });
     }
+    console.log("like")
     if (window.thriveStack?.track) {
       const videoId = btn.closest('.video-item')?.dataset.id || 'unknown';
       window.thriveStack.track([{
