@@ -356,7 +356,7 @@ function trackFeatureAndThriveStack(feature, userRole) {
           group_id: accountId
         }
       }
-    ]);
+    ]); // Always batch format
   }
 }
 
@@ -385,7 +385,7 @@ function trackScrollDepth() {
               group_id: accountId
             }
           }
-        ]);
+        ]); // Always batch format
       }
     }
   });
