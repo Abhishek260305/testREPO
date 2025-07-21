@@ -835,3 +835,72 @@ trackOnboardingComplete();
 trackOnboardingSkip();
 // Onboarding user properties
 setThriveStackUserProperties({ favorite_genre: genre, favorite_actor: actor, preferred_country: country });
+
+// ---------- ThriveStack Advanced Event Tracking ----------
+function trackThriveStackAccountAddedUser({ accountName, userEmail, userId, accountId }) {
+  if (typeof thriveStack !== 'undefined' && typeof thriveStack.track === 'function') {
+    thriveStack.track([
+      {
+        event_name: 'account_added_user',
+        properties: {
+          account_name: accountName,
+          user_email: userEmail
+        },
+        user_id: userId,
+        timestamp: new Date().toISOString(),
+        context: {
+          group_id: accountId
+        }
+      }
+    ]);
+  }
+}
+
+function trackThriveStackFeatureUsed({ featureName, userRole, userId, accountId }) {
+  if (typeof thriveStack !== 'undefined' && typeof thriveStack.track === 'function') {
+    thriveStack.track([
+      {
+        event_name: 'feature_used',
+        properties: {
+          feature_name: featureName,
+          user_role: userRole
+        },
+        user_id: userId,
+        timestamp: new Date().toISOString(),
+        context: {
+          group_id: accountId
+        }
+      }
+    ]);
+  }
+}
+
+function trackThriveStackInviteSent({ featureName, inviteeEmail, inviteeRole, inviteeRoleId, inviteeTeamId, inviteeTeam, inviteeUserId, subFeatureName, sourceUrl, userId, accountId }) {
+  if (typeof thriveStack !== 'undefined' && typeof thriveStack.track === 'function') {
+    thriveStack.track([
+      {
+        event_name: 'invite_sent',
+        properties: {
+          feature_name: featureName,
+          invitee_email: inviteeEmail,
+          invitee_role: inviteeRole,
+          invitee_role_id: inviteeRoleId,
+          invitee_team_id: inviteeTeamId,
+          invitee_team: inviteeTeam,
+          invitee_user_id: inviteeUserId,
+          sub_feature_name: subFeatureName,
+          source_url: sourceUrl
+        },
+        user_id: userId,
+        timestamp: new Date().toISOString(),
+        context: {
+          group_id: accountId
+        }
+      }
+    ]);
+  }
+}
+// Example usage:
+// trackThriveStackAccountAddedUser({ accountName: 'Acme', userEmail: 'john.doe@acme.xyz', userId: '18f716ac-37a4-464f-adb7-3cc30032308c', accountId: 'ac8db7ba-5139-4911-ba6e-523fd9c4704b' });
+// trackThriveStackFeatureUsed({ featureName: 'export_report', userRole: 'admin', userId: '18f716ac-37a4-464f-adb7-3cc30032308c', accountId: 'ac8db7ba-5139-4911-ba6e-523fd9c4704b' });
+// trackThriveStackInviteSent({ featureName: 'report', inviteeEmail: 'jane.doe@acme.xyz', inviteeRole: 'Admin', inviteeRoleId: 'ADMIN', inviteeTeamId: '6d56db83-509d-4764-a929-ab886ff929e0', inviteeTeam: 'Finance Team', inviteeUserId: 'ed1adb3a-9772-48ef-b620-e5e6d438fb82', subFeatureName: 'export_report', sourceUrl: 'https://yourDomainName.com/dashboard', userId: '18f716ac-37a4-464f-adb7-3cc30032308c', accountId: 'ac8db7ba-5139-4911-ba6e-523fd9c4704b' });
