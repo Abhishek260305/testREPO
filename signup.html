@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="style.css" />
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
 
-  <!-- Amplitude -->
+  <!-- ✅ Amplitude -->
   <script src="https://cdn.amplitude.com/script/ade7e539f08196c7af9b49113c377ba3.js"></script>
   <script>
     window.amplitude.add(window.sessionReplay.plugin({ sampleRate: 1 }));
@@ -17,7 +17,7 @@
     });
   </script>
 
-  <!-- Mixpanel -->
+  <!-- ✅ Mixpanel -->
   <script type="text/javascript">
     (function(f,b){
       if(!b.__SV){
@@ -53,6 +53,12 @@
     })(document,window.mixpanel||[]);
     mixpanel.init("3d7cfe3bafbda9c8c1450f6972c1cb8f");
   </script>
+
+  <script src="https://ts-script.app.thrivestack.ai/latest/thrivestack.js" 
+    api-key="m9S/wwTPiv7egZcG7DeBdvlsW37YfHRMpstb3xh1S0g=" 
+    source="marketing,product">
+</script>
+
 </head>
 
 <body>
@@ -74,21 +80,11 @@
     <p>&copy; 2024 NetFlixX. All rights reserved.</p>
   </footer>
 
+  <!-- ✅ Signup Tracking Logic -->
   <script>
     const signupForm = document.getElementById('signupForm');
     const emailInput = document.getElementById('signupEmail');
     const passwordInput = document.getElementById('signupPassword');
-
-    // Get UTM parameters from URL
-    function getUTMParameters() {
-      const params = new URLSearchParams(window.location.search);
-      return {
-        campaign: params.get('utm_campaign') || 'direct',
-        medium: params.get('utm_medium') || 'none',
-        source: params.get('utm_source') || 'direct',
-        term: params.get('utm_term') || 'none'
-      };
-    }
 
     // Track when signup starts (email field focused)
     emailInput.addEventListener('focus', () => {
@@ -97,61 +93,33 @@
     });
 
     if (signupForm) {
-      signupForm.addEventListener('submit', async function(e) {
+      signupForm.addEventListener('submit', function(e) {
         e.preventDefault();
         const email = emailInput.value;
         const password = passwordInput.value;
-        const utm = getUTMParameters();
 
         // Track submission attempt
-        if (typeof amplitude !== 'undefined') {
-          amplitude.logEvent('signup_submitted', { email, ...utm });
-        }
-        if (typeof mixpanel !== 'undefined') {
-          mixpanel.track('signup_submitted', { email, ...utm });
-        }
+        if (typeof amplitude !== 'undefined') amplitude.logEvent('signup_submitted', { email });
+        if (typeof mixpanel !== 'undefined') mixpanel.track('signup_submitted', { email });
 
-        // Validate fields
+        // If fields are empty, track failure
         if (!email || !password) {
-          if (typeof amplitude !== 'undefined') {
-            amplitude.logEvent('signup_failed', { reason: 'empty_fields', ...utm });
-          }
-          if (typeof mixpanel !== 'undefined') {
-            mixpanel.track('signup_failed', { reason: 'empty_fields', ...utm });
-          }
+          if (typeof amplitude !== 'undefined') amplitude.logEvent('signup_failed', { reason: 'empty_fields' });
+          if (typeof mixpanel !== 'undefined') mixpanel.track('signup_failed', { reason: 'empty_fields' });
           alert('Please fill in all fields');
           return;
         }
 
-        try {
-          // In a real app, you would call your signup API here
-          // const response = await fetch('/api/signup', { method: 'POST', body: JSON.stringify({ email, password }) });
-          
-          // Store user data and UTM parameters for signup_success.html
-          sessionStorage.setItem('signupEmail', email);
-          sessionStorage.setItem('signupUTM', JSON.stringify(utm));
+        // Save to session storage
+        sessionStorage.setItem('signupEmail', email);
+        sessionStorage.setItem('signupPassword', password);
 
-          // Track success (but actual conversion will be tracked on signup_success.html)
-          if (typeof amplitude !== 'undefined') {
-            amplitude.logEvent('signup_processed', { email, ...utm });
-          }
-          if (typeof mixpanel !== 'undefined') {
-            mixpanel.track('signup_processed', { email, ...utm });
-          }
+        // Track success
+        if (typeof amplitude !== 'undefined') amplitude.logEvent('signup_success', { email });
+        if (typeof mixpanel !== 'undefined') mixpanel.track('signup_success', { email });
 
-          // Redirect to success page with preserved UTM parameters
-          window.location.href = 'signup_success.html' + window.location.search;
-          
-        } catch (error) {
-          console.error('Signup error:', error);
-          if (typeof amplitude !== 'undefined') {
-            amplitude.logEvent('signup_failed', { reason: 'server_error', ...utm });
-          }
-          if (typeof mixpanel !== 'undefined') {
-            mixpanel.track('signup_failed', { reason: 'server_error', ...utm });
-          }
-          alert('Signup failed. Please try again.');
-        }
+        alert('Signup successful! Please login.');
+        window.location.href = 'index.html#show-onboarding';
       });
     }
   </script>
