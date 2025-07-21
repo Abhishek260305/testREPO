@@ -1121,3 +1121,19 @@ document.addEventListener('DOMContentLoaded', () => {
     })
   );
 });
+
+// ---------- Error Tracking Helper ----------
+function trackError(errorType, errorMessage) {
+  trackEvent('error_event', {
+    error_type: errorType,
+    error_message: errorMessage,
+    page: window.location.pathname
+  });
+}
+
+// ---------- ThriveStack User Identification Helper ----------
+function setThriveStackUser(userId, userEmail) {
+  if (typeof thriveStack !== 'undefined' && typeof thriveStack.setUser === 'function') {
+    thriveStack.setUser(userId, userEmail);
+  }
+}
