@@ -224,6 +224,26 @@
             }]);
             localStorage.setItem('accountCreatedTracked', 'true');
         }
+
+            // ====== ADD USER-COMPANY ASSOCIATION HERE ======
+    if (window.thriveStack && !localStorage.getItem('userCompanyAssociated')) {
+        window.thriveStack.track([{
+            "event_name": "account_added_user",
+            "properties": {
+                "account_name": signupData.email.split('@')[0] + "'s Account",
+                "user_email": signupData.email
+            },
+            "user_id": signupData.userId || crypto.randomUUID(),
+            "timestamp": new Date().toISOString(),
+            "context": {
+                // MUST match account_id from account_created event
+                "group_id": "netflixx-account-" + crypto.randomUUID() 
+            }
+        }]);
+        localStorage.setItem('userCompanyAssociated', 'true');
+    }
+    // ====== END OF NEW CODE ======
+
           
           // Track with other analytics
           amplitude?.logEvent('signup_converted', { 
