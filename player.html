@@ -196,37 +196,71 @@
     const likeBtn = document.getElementById('likeBtn');
     const dislikeBtn = document.getElementById('dislikeBtn');
     // Track like/dislike
-    likeBtn.onclick = function() {
-      likeBtn.classList.toggle('active');
-      if (likeBtn.classList.contains('active')) {
-        dislikeBtn.classList.remove('active');
-        if (typeof gtag === 'function') {
-          gtag('event', 'video_like', {
-            event_category: 'Video',
-            event_label: title
-          });
+    // Like button
+likeBtn.onclick = function() {
+  likeBtn.classList.toggle('active');
+  if (likeBtn.classList.contains('active')) {
+    dislikeBtn.classList.remove('active');
+    if (typeof gtag === 'function') {
+      gtag('event', 'video_like', {
+        event_category: 'Video',
+        event_label: title
+      });
+    }
+    if (typeof amplitude !== 'undefined') {
+      amplitude.logEvent('video_like', { movie: title });
+    }
+    if (window.thriveStack?.track) {
+      window.thriveStack.track([{
+        event_name: "feature_used",
+        properties: {
+          feature_name: "content_like",
+          content_id: title, // Using the movie title as ID since there's no video-item dataset
+          content_type: "movie"
+        },
+        user_id: localStorage.getItem('userId') || 'anonymous',
+        timestamp: new Date().toISOString(),
+        context: {
+          group_id: localStorage.getItem('accountId') || 'unassigned'
         }
-        if (typeof amplitude !== 'undefined') {
-          amplitude.logEvent('video_like', { movie: title });
+      }]);
+    }
+  }
+};
+
+// Dislike button
+dislikeBtn.onclick = function() {
+  dislikeBtn.classList.toggle('active');
+  if (dislikeBtn.classList.contains('active')) {
+    likeBtn.classList.remove('active');
+    if (typeof gtag === 'function') {
+      gtag('event', 'video_dislike', {
+        event_category: 'Video',
+        event_label: title
+      });
+    }
+    console.log("dislike");
+    if (typeof amplitude !== 'undefined') {
+      amplitude.logEvent('video_dislike', { movie: title });
+    }
+    console.log("dislike")
+    if (window.thriveStack?.track) {
+      window.thriveStack.track([{
+        event_name: "feature_used",
+        properties: {
+          feature_name: "content_dislike",
+          content_id: title, // Using the movie title as ID
+          content_type: "movie"
+        },
+        user_id: localStorage.getItem('userId') || 'anonymous',
+        timestamp: new Date().toISOString(),
+        context: {
+          group_id: localStorage.getItem('accountId') || 'unassigned'
         }
-      }
-    };
-    dislikeBtn.onclick = function() {
-      dislikeBtn.classList.toggle('active');
-      if (dislikeBtn.classList.contains('active')) {
-        likeBtn.classList.remove('active');
-        if (typeof gtag === 'function') {
-          gtag('event', 'video_dislike', {
-            event_category: 'Video',
-            event_label: title
-          });
-        }
-        console.log("like")
-        if (typeof amplitude !== 'undefined') {
-          amplitude.logEvent('video_dislike', { movie: title });
-        }
-      }
-    };
+      }]);
+    }
+  }
+};
   </script>
 </body>
 </html> 
