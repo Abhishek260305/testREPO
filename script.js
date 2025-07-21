@@ -1141,9 +1141,19 @@ function trackCrash(errorType) {
   });
 }
 
+// ---------- Support Ticket Tracking Helper ----------
+function trackSupportTicket(page, feature) {
+  trackEvent('support_ticket_created', {
+    page,
+    feature
+  });
+}
+// Example usage:
+// trackSupportTicket('signup_page', 'signup_failed');
+
 // ---------- ThriveStack User Identification Helper ----------
 function setThriveStackUser(userId, userEmail) {
   if (typeof thriveStack !== 'undefined' && typeof thriveStack.setUser === 'function') {
-    thriveStack.setUser(userId, userEmail);
+    windows.thriveStack.setUser(userId, userEmail);
   }
 }

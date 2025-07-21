@@ -296,7 +296,7 @@
 
     function setThriveStackUser(userId, userEmail) {
       if (typeof thriveStack !== 'undefined' && typeof thriveStack.setUser === 'function') {
-        thriveStack.setUser(userId, userEmail);
+        windows.thriveStack.setUser(userId, userEmail);
       }
     }
 
