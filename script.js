@@ -1131,6 +1131,16 @@ function trackError(errorType, errorMessage) {
   });
 }
 
+// ---------- Crash Tracking Helper ----------
+function trackCrash(errorType) {
+  trackEvent('crash_event', {
+    error_type: errorType,
+    device: navigator.userAgent,
+    os: navigator.platform,
+    page: window.location.pathname
+  });
+}
+
 // ---------- ThriveStack User Identification Helper ----------
 function setThriveStackUser(userId, userEmail) {
   if (typeof thriveStack !== 'undefined' && typeof thriveStack.setUser === 'function') {
