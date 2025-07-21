@@ -224,16 +224,16 @@ window.thriveStack.track([{
     
 
     // 2. Track User-Company Association
-    window.thriveStack.track([{
+window.thriveStack.track([{
         "event_name": "account_added_user",
         "properties": {
-            "account_name": signupData.email.split('@')[0] + "'s Account",
-            "user_email": signupData.email
+            "account_name": "Acme",
+            "user_email": "john.doe@acme.xyz"
         },
-        "user_id": userId, // Same as above
-        "timestamp": new Date().toISOString(),
+        "user_id": "18f716ac-37a4-464f-adb7-3cc30032308c",
+        "timestamp": "2025-07-21T12:11:27.424Z",
         "context": {
-            "group_id": accountId // Same as account_id
+            "group_id": "ac8db7ba-5139-4911-ba6e-523fd9c4704b"
         }
     }]);
 
