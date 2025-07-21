@@ -81,7 +81,7 @@
   </footer>
 
   <!-- ✅ Signup Tracking Logic -->
-  <script>
+<script>
     const signupForm = document.getElementById('signupForm');
     const emailInput = document.getElementById('signupEmail');
     const passwordInput = document.getElementById('signupPassword');
@@ -167,7 +167,24 @@
             console.log("[DEBUG] Sending account creation to ThriveStack:", accountEvent);
             window.thriveStack.track([accountEvent]);
 
-            console.log("[DEBUG] Both ThriveStack events sent successfully");
+            // 3. Track user-company association
+            const userCompanyEvent = {
+              "event_name": "account_added_user",
+              "properties": {
+                "account_name": email.split('@')[0] + "'s Account",
+                "user_email": email
+              },
+              "user_id": userId,
+              "timestamp": timestamp,
+              "context": {
+                "group_id": accountId
+              }
+            };
+            
+            console.log("[DEBUG] Sending user-company association to ThriveStack:", userCompanyEvent);
+            window.thriveStack.track([userCompanyEvent]);
+
+            console.log("[DEBUG] All ThriveStack events sent successfully");
 
           } catch (e) {
             console.error("[DEBUG] ThriveStack tracking error:", e);
