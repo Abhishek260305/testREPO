@@ -339,8 +339,8 @@
       };
     }
     function trackFeatureAndThriveStack(feature, userRole) {
-      if (typeof thriveStack !== 'undefined' && typeof thriveStack.track === 'function') {
-        thriveStack.track([
+      if (typeof thriveStack !== 'undefined' && typeof window.thriveStack.track === 'function') {
+        window.thriveStack.track([
           {
             event_name: 'feature_used',
             properties: {

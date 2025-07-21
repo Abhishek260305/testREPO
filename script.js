@@ -21,11 +21,16 @@ window.addEventListener('load', () => {
       os: navigator.platform
     });
   }
-  if (typeof thriveStack !== 'undefined' && typeof thriveStack.track === 'function') {
-    thriveStack.track('page_loaded', { page: window.location.pathname });
+  if (typeof thriveStack !== 'undefined' && typeof window.thriveStack.track === 'function') {
+    window.thriveStack.track([
+      {
+        event_name: 'page_loaded',
+        properties: { loadTime }
+      }
+    ]);
   }
-  if (typeof thriveStack !== 'undefined' && typeof thriveStack.track === 'function') {
-    thriveStack.track('page_loaded', {
+  if (typeof thriveStack !== 'undefined' && typeof window.thriveStack.track === 'function') {
+    window.thriveStack.track('page_loaded', {
       page: window.location.pathname,
       load_time_ms: performance.timing.domContentLoadedEventEnd - performance.timing.navigationStart,
       device: navigator.userAgent,
@@ -58,8 +63,8 @@ navLinks.forEach(link => {
         if (typeof mixpanel !== 'undefined') {
           mixpanel.track('section_navigation', { section: href });
         }
-        if (typeof thriveStack !== 'undefined' && typeof thriveStack.track === 'function') {
-          thriveStack.track('section_navigation', { section: href });
+        if (typeof thriveStack !== 'undefined' && typeof window.thriveStack.track === 'function') {
+          window.thriveStack.track('section_navigation', { section: href });
         }
       }
     }
@@ -109,8 +114,8 @@ window.addEventListener('scroll', () => {
     if (typeof mixpanel !== 'undefined' && lastTrackedSection !== current) {
       mixpanel.track('section_viewed', { section: current });
     }
-    if (typeof thriveStack !== 'undefined' && typeof thriveStack.track === 'function' && lastTrackedSection !== current) {
-      thriveStack.track('section_viewed', { section: current });
+    if (typeof thriveStack !== 'undefined' && typeof window.thriveStack.track === 'function' && lastTrackedSection !== current) {
+      window.thriveStack.track('section_viewed', { section: current });
     }
     lastTrackedSection = current;
   }
@@ -140,8 +145,8 @@ if (loginForm) {
       if (typeof mixpanel !== 'undefined') {
         mixpanel.track('login_success', { email });
       }
-      if (typeof thriveStack !== 'undefined' && typeof thriveStack.track === 'function') {
-        thriveStack.track('login_success', { email });
+      if (typeof thriveStack !== 'undefined' && typeof window.thriveStack.track === 'function') {
+        window.thriveStack.track('login_success', { email });
       }
       window.location.href = 'dashboard.html';
     } else {
@@ -158,8 +163,8 @@ if (loginForm) {
       if (typeof mixpanel !== 'undefined') {
         mixpanel.track('login_failed', { email });
       }
-      if (typeof thriveStack !== 'undefined' && typeof thriveStack.track === 'function') {
-        thriveStack.track('login_failed', { email });
+      if (typeof thriveStack !== 'undefined' && typeof window.thriveStack.track === 'function') {
+        window.thriveStack.track('login_failed', { email });
       }
       alert('Invalid credentials. Please try again or sign up.');
     }
@@ -181,8 +186,8 @@ document.querySelectorAll('.btn-like').forEach(btn =>
     if (typeof mixpanel !== 'undefined') {
       mixpanel.track('video_like', { label: 'Like Clicked' });
     }
-    if (typeof thriveStack !== 'undefined' && typeof thriveStack.track === 'function') {
-      thriveStack.track('video_like', { label: 'Like Clicked' });
+    if (typeof thriveStack !== 'undefined' && typeof window.thriveStack.track === 'function') {
+      window.thriveStack.track('video_like', { label: 'Like Clicked' });
     }
   })
 );
@@ -201,8 +206,8 @@ document.querySelectorAll('.btn-dislike').forEach(btn =>
     if (typeof mixpanel !== 'undefined') {
       mixpanel.track('video_dislike', { label: 'Dislike Clicked' });
     }
-    if (typeof thriveStack !== 'undefined' && typeof thriveStack.track === 'function') {
-      thriveStack.track('video_dislike', { label: 'Dislike Clicked' });
+    if (typeof thriveStack !== 'undefined' && typeof window.thriveStack.track === 'function') {
+      window.thriveStack.track('video_dislike', { label: 'Dislike Clicked' });
     }
   })
 );
@@ -221,8 +226,8 @@ document.querySelectorAll('.btn-play').forEach(btn =>
     if (typeof mixpanel !== 'undefined') {
       mixpanel.track('video_play', { label: 'Play Clicked' });
     }
-    if (typeof thriveStack !== 'undefined' && typeof thriveStack.track === 'function') {
-      thriveStack.track('video_play', { label: 'Play Clicked' });
+    if (typeof thriveStack !== 'undefined' && typeof window.thriveStack.track === 'function') {
+      window.thriveStack.track('video_play', { label: 'Play Clicked' });
     }
   })
 );
@@ -241,8 +246,8 @@ document.querySelectorAll('.btn-pause').forEach(btn =>
     if (typeof mixpanel !== 'undefined') {
       mixpanel.track('video_pause', { label: 'Pause Clicked' });
     }
-    if (typeof thriveStack !== 'undefined' && typeof thriveStack.track === 'function') {
-      thriveStack.track('video_pause', { label: 'Pause Clicked' });
+    if (typeof thriveStack !== 'undefined' && typeof window.thriveStack.track === 'function') {
+      window.thriveStack.track('video_pause', { label: 'Pause Clicked' });
     }
   })
 );
@@ -274,8 +279,8 @@ window.addEventListener('scroll', () => {
       if (typeof amplitude !== 'undefined') {
         amplitude.logEvent('section_time_spent', { section: currentSection, duration_ms: duration });
       }
-      if (typeof thriveStack !== 'undefined' && typeof thriveStack.track === 'function') {
-        thriveStack.track('section_time_spent', { section: currentSection, duration_ms: duration });
+      if (typeof thriveStack !== 'undefined' && typeof window.thriveStack.track === 'function') {
+        window.thriveStack.track('section_time_spent', { section: currentSection, duration_ms: duration });
       }
     }
     // Start new section
@@ -293,8 +298,8 @@ window.addEventListener('beforeunload', () => {
   if (typeof amplitude !== 'undefined') {
     amplitude.logEvent('session_end', { duration_ms: duration });
   }
-  if (typeof thriveStack !== 'undefined' && typeof thriveStack.track === 'function') {
-    thriveStack.track('session_end', { duration_ms: duration });
+  if (typeof thriveStack !== 'undefined' && typeof window.thriveStack.track === 'function') {
+    window.thriveStack.track('session_end', { duration_ms: duration });
   }
 });
 
@@ -342,8 +347,8 @@ function trackFeatureAndThriveStack(feature, userRole) {
   const userId = getCurrentUserId();
   const accountId = getCurrentAccountId();
 
-  if (typeof thriveStack !== 'undefined' && typeof thriveStack.track === 'function') {
-    thriveStack.track([
+  if (typeof thriveStack !== 'undefined' && typeof window.thriveStack.track === 'function') {
+    window.thriveStack.track([
       {
         event_name: 'feature_used',
         properties: {
@@ -360,51 +365,6 @@ function trackFeatureAndThriveStack(feature, userRole) {
   }
 }
 
-// ---------- Analytics & Tracking Utilities ----------
-
-// ThriveStack initialization check
-if (typeof thriveStack === 'undefined') {
-  console.warn('ThriveStack not loaded - analytics will be limited');
-}
-
-// Utility: Get user/device context
-function getUserContext() {
-  return {
-    user_id: sessionStorage.getItem('signupEmail') || 'anonymous_user',
-    device_id: localStorage.getItem('device_id') || 'anonymous_device_' + Math.random().toString(36).substring(2),
-  };
-}
-
-// Utility: Safe ThriveStack batch event
-function safeTrack(events) {
-  if (!Array.isArray(events)) {
-    console.error('thriveStack.track expected an array, got:', events);
-    return;
-  }
-  if (typeof thriveStack !== 'undefined' && typeof thriveStack.track === 'function') {
-    thriveStack.track(events);
-  }
-}
-
-// Unified event tracking for all providers
-function trackEvent(eventName, properties = {}) {
-  const context = getUserContext();
-  // ThriveStack
-  safeTrack([
-    {
-      event_name: eventName,
-      properties,
-      context
-    }
-  ]);
-  // Google Analytics
-  if (typeof gtag === 'function') {
-    gtag('event', eventName, properties);
-  }
-  // Add other providers here if needed (amplitude, mixpanel, etc)
-}
-
-// Throttle utility
 function throttle(func, limit) {
   let inThrottle;
   return function () {
@@ -416,88 +376,146 @@ function throttle(func, limit) {
   };
 }
 
-// DOMContentLoaded: All DOM-dependent event listeners
-// (prevents errors if elements are not yet loaded)
-document.addEventListener('DOMContentLoaded', () => {
-  // Feature button tracking
-  const featureButtons = document.querySelectorAll('[data-feature]');
-  featureButtons.forEach(button => {
-    button.addEventListener('click', () => {
-      const feature = button.getAttribute('data-feature');
-      const userRole = button.getAttribute('data-role') || 'guest';
-      if (feature) trackEvent('feature_used', { feature_name: feature, user_role: userRole });
-    });
-  });
+// Attach scroll listener with throttle
+document.addEventListener('scroll', throttle(trackScrollDepth, 500));
 
-  // Login tracking
-  const loginForm = document.getElementById('loginForm');
-  if (loginForm) {
-    loginForm.addEventListener('submit', function (e) {
-      e.preventDefault();
-      const email = document.getElementById('loginEmail').value;
-      const password = document.getElementById('loginPassword').value;
-      const storedEmail = sessionStorage.getItem('signupEmail');
-      const storedPassword = sessionStorage.getItem('signupPassword');
-      if (email === storedEmail && password === storedPassword) {
-        trackEvent('login_success', { email });
-        window.location.href = 'dashboard.html';
-      } else {
-        trackEvent('login_failed', { email });
-        alert('Invalid credentials. Please try again or sign up.');
-      }
+document.querySelectorAll('.btn-feature').forEach(btn => {
+  btn.addEventListener('click', e => {
+    if (!e.target.dataset.feature) return;
+    const feature = e.target.dataset.feature || 'unknown_feature';
+    const userRole = e.target.dataset.role || 'guest';
+    trackFeatureAndThriveStack(feature, userRole);
+  });
+});
+
+// Optional: track user properties safely if defined
+if (typeof genre !== 'undefined' && typeof actor !== 'undefined' && typeof country !== 'undefined') {
+  setThriveStackUserProperties({
+    favorite_genre: genre,
+    favorite_actor: actor,
+    preferred_country: country
+  });
+}
+
+function trackError(errorType, errorMessage) {
+  if (typeof amplitude !== 'undefined') {
+    amplitude.logEvent('error_event', {
+      error_type: errorType,
+      error_message: errorMessage,
+      page: window.location.pathname
     });
   }
+  if (typeof thriveStack !== 'undefined' && typeof window.thriveStack.track === 'function') {
+    const userId = getCurrentUserId();
+    const accountId = getCurrentAccountId();
+    window.thriveStack.track([
+      {
+        event_name: 'error_event',
+        properties: {
+          error_type: errorType,
+          error_message: errorMessage,
+          page: window.location.pathname
+        },
+        user_id: userId,
+        timestamp: new Date().toISOString(),
+        context: accountId ? { group_id: accountId } : undefined
+      }
+    ]);
+  }
+}
+// Example usage:
+trackError('signup_failed', 'Email already exists');
 
-  // Video interaction tracking
-  document.querySelectorAll('.btn-like').forEach(btn =>
-    btn.addEventListener('click', () => {
-      trackEvent('video_like', { label: 'Like Clicked' });
-    })
-  );
-  document.querySelectorAll('.btn-dislike').forEach(btn =>
-    btn.addEventListener('click', () => {
-      trackEvent('video_dislike', { label: 'Dislike Clicked' });
-    })
-  );
-  document.querySelectorAll('.btn-play').forEach(btn =>
-    btn.addEventListener('click', () => {
-      trackEvent('video_play', { label: 'Play Clicked' });
-    })
-  );
-  document.querySelectorAll('.btn-pause').forEach(btn =>
-    btn.addEventListener('click', () => {
-      trackEvent('video_pause', { label: 'Pause Clicked' });
-    })
-  );
+function trackCrash(errorType) {
+  if (typeof amplitude !== 'undefined') {
+    console.log("Hi")
+    amplitude.logEvent('crash_event', {
+      error_type: errorType,
+      device: navigator.userAgent,
+      os: navigator.platform
+    });
+  }
+  if (typeof thriveStack !== 'undefined' && typeof window.thriveStack.track === 'function') {
+    const userId = getCurrentUserId();
+    const accountId = getCurrentAccountId();
+    window.thriveStack.track([
+      {
+        event_name: 'crash_event',
+        properties: {
+          error_type: errorType,
+          device: navigator.userAgent,
+          os: navigator.platform
+        },
+        user_id: userId,
+        timestamp: new Date().toISOString(),
+        context: accountId ? { group_id: accountId } : undefined
+      }
+    ]);
+  }
+}
 
-  // Optional: user properties (only if defined)
-  if (typeof genre !== 'undefined' || typeof actor !== 'undefined' || typeof country !== 'undefined') {
-    const properties = {};
-    if (typeof genre !== 'undefined') properties.favorite_genre = genre;
-    if (typeof actor !== 'undefined') properties.favorite_actor = actor;
-    if (typeof country !== 'undefined') properties.preferred_country = country;
-    if (Object.keys(properties).length > 0) {
-      trackEvent('user_context_set', properties);
+function trackSupportTicket(page, feature) {
+  if (typeof amplitude !== 'undefined') {
+    amplitude.logEvent('support_ticket_created', { page, feature });
+  }
+  if (typeof thriveStack !== 'undefined' && typeof window.thriveStack.track === 'function') {
+    const userId = getCurrentUserId();
+    const accountId = getCurrentAccountId();
+    window.thriveStack.track([
+      {
+        event_name: 'support_ticket_created',
+        properties: { page, feature },
+        user_id: userId,
+        timestamp: new Date().toISOString(),
+        context: accountId ? { group_id: accountId } : undefined
+      }
+    ]);
+  }
+}
+
+console.log("Debug")
+
+// Scroll depth tracking with batch format for ThriveStack
+let maxScrollDepth = 0;
+window.addEventListener('scroll', () => {
+  const scrollTop = window.scrollY;
+  const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+  if (docHeight > 0) {
+    const percent = Math.round((scrollTop / docHeight) * 100);
+    if (percent > maxScrollDepth) {
+      maxScrollDepth = percent;
+      [25, 50, 75, 100].forEach(threshold => {
+        if (percent >= threshold && !window[`amplitude_scroll_${threshold}`]) {
+          window[`amplitude_scroll_${threshold}`] = true;
+          if (typeof amplitude !== 'undefined') {
+            amplitude.logEvent('scroll_depth', { percent: threshold, page: window.location.pathname });
+          }
+          if (typeof thriveStack !== 'undefined' && typeof window.thriveStack.track === 'function') {
+            const userId = getCurrentUserId();
+            const accountId = getCurrentAccountId();
+            window.thriveStack.track([
+              {
+                event_name: 'scroll_depth',
+                properties: { percent: threshold, page: window.location.pathname },
+                user_id: userId,
+                timestamp: new Date().toISOString(),
+                context: accountId ? { group_id: accountId } : undefined
+              }
+            ]);
+          }
+        }
+      });
     }
   }
 });
-
-// Throttled scroll tracking (single handler)
-const trackScroll = throttle(() => {
-  const scrollPercent = Math.round(
-    (window.scrollY + window.innerHeight) / document.body.scrollHeight * 100
-  );
-  trackEvent('scroll_depth', { percent: scrollPercent });
-}, 500);
-window.addEventListener('scroll', trackScroll);
 
 // ---------- Onboarding Event Tracking for Amplitude ----------
 function trackOnboardingStart() {
   if (typeof amplitude !== 'undefined') {
     amplitude.logEvent('onboarding_start');
   }
-  if (typeof thriveStack !== 'undefined' && typeof thriveStack.track === 'function') {
-    thriveStack.track('onboarding_start');
+  if (typeof thriveStack !== 'undefined' && typeof window.thriveStack.track === 'function') {
+    window.thriveStack.track('onboarding_start');
   }
 }
 
@@ -505,8 +523,8 @@ function trackOnboardingStep(stepName) {
   if (typeof amplitude !== 'undefined') {
     amplitude.logEvent('onboarding_step', { step_name: stepName });
   }
-  if (typeof thriveStack !== 'undefined' && typeof thriveStack.track === 'function') {
-    thriveStack.track('onboarding_step', { step_name: stepName });
+  if (typeof thriveStack !== 'undefined' && typeof window.thriveStack.track === 'function') {
+    window.thriveStack.track('onboarding_step', { step_name: stepName });
   }
 }
 
@@ -514,8 +532,8 @@ function trackOnboardingComplete() {
   if (typeof amplitude !== 'undefined') {
     amplitude.logEvent('onboarding_complete');
   }
-  if (typeof thriveStack !== 'undefined' && typeof thriveStack.track === 'function') {
-    thriveStack.track('onboarding_complete');
+  if (typeof thriveStack !== 'undefined' && typeof window.thriveStack.track === 'function') {
+    window.thriveStack.track('onboarding_complete');
   }
 }
 
@@ -523,8 +541,8 @@ function trackOnboardingSkip() {
   if (typeof amplitude !== 'undefined') {
     amplitude.logEvent('onboarding_skip');
   }
-  if (typeof thriveStack !== 'undefined' && typeof thriveStack.track === 'function') {
-    thriveStack.track('onboarding_skip');
+  if (typeof thriveStack !== 'undefined' && typeof window.thriveStack.track === 'function') {
+    window.thriveStack.track('onboarding_skip');
   }
 }
 // Example usage:
@@ -535,8 +553,8 @@ function trackOnboardingSkip() {
 
 // ---------- ThriveStack Event Tracking ----------
 function trackThriveStackEvent(event, props) {
-  if (typeof thriveStack !== 'undefined' && typeof thriveStack.track === 'function') {
-    thriveStack.track(event, props);
+  if (typeof thriveStack !== 'undefined' && typeof window.thriveStack.track === 'function') {
+    window.thriveStack.track(event, props);
   }
 }
 function setThriveStackUserProperties(props) {
@@ -571,11 +589,11 @@ window.addEventListener('load', () => {
       os: navigator.platform
     });
   }
-  if (typeof thriveStack !== 'undefined' && typeof thriveStack.track === 'function') {
-    thriveStack.track('page_loaded', { page: window.location.pathname });
+  if (typeof thriveStack !== 'undefined' && typeof window.thriveStack.track === 'function') {
+    window.thriveStack.track('page_loaded', { page: window.location.pathname });
   }
-  if (typeof thriveStack !== 'undefined' && typeof thriveStack.track === 'function') {
-    thriveStack.track('page_loaded', {
+  if (typeof thriveStack !== 'undefined' && typeof window.thriveStack.track === 'function') {
+    window.thriveStack.track('page_loaded', {
       page: window.location.pathname,
       load_time_ms: performance.timing.domContentLoadedEventEnd - performance.timing.navigationStart,
       device: navigator.userAgent,
@@ -606,8 +624,8 @@ navLinks.forEach(link => {
         if (typeof mixpanel !== 'undefined') {
           mixpanel.track('section_navigation', { section: href });
         }
-        if (typeof thriveStack !== 'undefined' && typeof thriveStack.track === 'function') {
-          thriveStack.track('section_navigation', { section: href });
+        if (typeof thriveStack !== 'undefined' && typeof window.thriveStack.track === 'function') {
+          window.thriveStack.track('section_navigation', { section: href });
         }
       }
     }
@@ -652,12 +670,13 @@ window.addEventListener('scroll', () => {
     if (typeof mixpanel !== 'undefined' && lastTrackedSection !== current) {
       mixpanel.track('section_viewed', { section: current });
     }
-    if (typeof thriveStack !== 'undefined' && typeof thriveStack.track === 'function' && lastTrackedSection !== current) {
-      thriveStack.track('section_viewed', { section: current });
+    if (typeof thriveStack !== 'undefined' && typeof window.thriveStack.track === 'function' && lastTrackedSection !== current) {
+      window.thriveStack.track('section_viewed', { section: current });
     }
     lastTrackedSection = current;
   }
 });
+
 document.addEventListener('DOMContentLoaded', () => {
   const loginForm = document.getElementById('loginForm'); // Ensure this ID exists in your HTML
 
@@ -683,8 +702,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (typeof mixpanel !== 'undefined') {
           mixpanel.track('login_success', { email });
         }
-        if (typeof thriveStack !== 'undefined' && typeof thriveStack.track === 'function') {
-          thriveStack.track([{ event: 'login_success', properties: { email } }]); // Batch format!
+        if (typeof thriveStack !== 'undefined' && typeof window.thriveStack.track === 'function') {
+          window.thriveStack.track([{ event: 'login_success', properties: { email } }]); // Batch format!
         }
         window.location.href = 'dashboard.html';
       } else {
@@ -701,8 +720,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (typeof mixpanel !== 'undefined') {
           mixpanel.track('login_failed', { email });
         }
-        if (typeof thriveStack !== 'undefined' && typeof thriveStack.track === 'function') {
-          thriveStack.track([{ event: 'login_failed', properties: { email } }]); // Batch format!
+        if (typeof thriveStack !== 'undefined' && typeof window.thriveStack.track === 'function') {
+          window.thriveStack.track([{ event: 'login_failed', properties: { email } }]); // Batch format!
         }
         alert('Invalid credentials. Please try again or sign up.');
       }
@@ -724,12 +743,13 @@ document.addEventListener('DOMContentLoaded', () => {
       if (typeof mixpanel !== 'undefined') {
         mixpanel.track('video_like', { label: 'Like Clicked' });
       }
-      if (typeof thriveStack !== 'undefined' && typeof thriveStack.track === 'function') {
-        thriveStack.track([{ event: 'video_like', properties: { label: 'Like Clicked' } }]); // Batch format!
+      if (typeof thriveStack !== 'undefined' && typeof window.thriveStack.track === 'function') {
+        window.thriveStack.track([{ event: 'video_like', properties: { label: 'Like Clicked' } }]); // Batch format!
       }
     })
   );
 });
+
 document.querySelectorAll('.btn-dislike').forEach(btn =>
   btn.addEventListener('click', () => {
     if (typeof gtag === 'function') {
@@ -744,8 +764,8 @@ document.querySelectorAll('.btn-dislike').forEach(btn =>
     if (typeof mixpanel !== 'undefined') {
       mixpanel.track('video_dislike', { label: 'Dislike Clicked' });
     }
-    if (typeof thriveStack !== 'undefined' && typeof thriveStack.track === 'function') {
-      thriveStack.track('video_dislike', { label: 'Dislike Clicked' });
+    if (typeof thriveStack !== 'undefined' && typeof window.thriveStack.track === 'function') {
+      window.thriveStack.track('video_dislike', { label: 'Dislike Clicked' });
     }
   })
 );
@@ -764,8 +784,8 @@ document.querySelectorAll('.btn-play').forEach(btn =>
     if (typeof mixpanel !== 'undefined') {
       mixpanel.track('video_play', { label: 'Play Clicked' });
     }
-    if (typeof thriveStack !== 'undefined' && typeof thriveStack.track === 'function') {
-      thriveStack.track('video_play', { label: 'Play Clicked' });
+    if (typeof thriveStack !== 'undefined' && typeof window.thriveStack.track === 'function') {
+      window.thriveStack.track('video_play', { label: 'Play Clicked' });
     }
   })
 );
@@ -784,8 +804,8 @@ document.querySelectorAll('.btn-pause').forEach(btn =>
     if (typeof mixpanel !== 'undefined') {
       mixpanel.track('video_pause', { label: 'Pause Clicked' });
     }
-    if (typeof thriveStack !== 'undefined' && typeof thriveStack.track === 'function') {
-      thriveStack.track('video_pause', { label: 'Pause Clicked' });
+    if (typeof thriveStack !== 'undefined' && typeof window.thriveStack.track === 'function') {
+      window.thriveStack.track('video_pause', { label: 'Pause Clicked' });
     }
   })
 );
@@ -814,8 +834,8 @@ window.addEventListener('scroll', () => {
       if (typeof amplitude !== 'undefined') {
         amplitude.logEvent('section_time_spent', { section: currentSection, duration_ms: duration });
       }
-      if (typeof thriveStack !== 'undefined' && typeof thriveStack.track === 'function') {
-        thriveStack.track('section_time_spent', { section: currentSection, duration_ms: duration });
+      if (typeof thriveStack !== 'undefined' && typeof window.thriveStack.track === 'function') {
+        window.thriveStack.track('section_time_spent', { section: currentSection, duration_ms: duration });
       }
     }
     // Start new section
@@ -832,8 +852,8 @@ window.addEventListener('beforeunload', () => {
   if (typeof amplitude !== 'undefined') {
     amplitude.logEvent('session_end', { duration_ms: duration });
   }
-  if (typeof thriveStack !== 'undefined' && typeof thriveStack.track === 'function') {
-    thriveStack.track('session_end', { duration_ms: duration });
+  if (typeof thriveStack !== 'undefined' && typeof window.thriveStack.track === 'function') {
+    window.thriveStack.track('session_end', { duration_ms: duration });
   }
 });
 // UTM properties
@@ -844,8 +864,13 @@ document.querySelectorAll('.btn-cta').forEach(btn => {
     if (typeof amplitude !== 'undefined') {
       amplitude.logEvent('cta_click', { location: window.location.pathname });
     }
-    if (typeof thriveStack !== 'undefined' && typeof thriveStack.track === 'function') {
-      thriveStack.track('cta_click', { location: window.location.pathname });
+    if (typeof thriveStack !== 'undefined' && typeof window.thriveStack.track === 'function') {
+      window.thriveStack.track([
+  {
+    event_name: 'cta_click',
+    properties: { label: cta.textContent.trim() }
+  }
+]);
     }
   });
 });
@@ -853,16 +878,16 @@ document.querySelectorAll('.btn-cta').forEach(btn => {
 document.querySelectorAll('.poster').forEach(el => {
   el.addEventListener('click', () => {
     amplitude.logEvent('content_click', { content_type: 'poster' });
-    if (typeof thriveStack !== 'undefined' && typeof thriveStack.track === 'function') {
-      thriveStack.track('content_click', { content_type: 'poster' });
+    if (typeof thriveStack !== 'undefined' && typeof window.thriveStack.track === 'function') {
+      window.thriveStack.track('content_click', { content_type: 'poster' });
     }
   });
 });
 document.querySelectorAll('.trailer').forEach(el => {
   el.addEventListener('click', () => {
     amplitude.logEvent('content_click', { content_type: 'trailer' });
-    if (typeof thriveStack !== 'undefined' && typeof thriveStack.track === 'function') {
-      thriveStack.track('content_click', { content_type: 'trailer' });
+    if (typeof thriveStack !== 'undefined' && typeof window.thriveStack.track === 'function') {
+      window.thriveStack.track('content_click', { content_type: 'trailer' });
     }
   });
 });
@@ -886,8 +911,8 @@ if (typeof genre !== 'undefined' && typeof actor !== 'undefined' && typeof count
 }
 // ---------- ThriveStack Advanced Event Tracking ----------
 function trackThriveStackAccountAddedUser({ accountName, userEmail, userId, accountId }) {
-  if (typeof thriveStack !== 'undefined' && typeof thriveStack.track === 'function') {
-    thriveStack.track([
+  if (typeof thriveStack !== 'undefined' && typeof window.thriveStack.track === 'function') {
+    window.thriveStack.track([
       {
         event_name: 'account_added_user',
         properties: {
@@ -905,8 +930,8 @@ function trackThriveStackAccountAddedUser({ accountName, userEmail, userId, acco
 }
 
 function trackThriveStackFeatureUsed({ featureName, userRole, userId, accountId }) {
-  if (typeof thriveStack !== 'undefined' && typeof thriveStack.track === 'function') {
-    thriveStack.track([
+  if (typeof thriveStack !== 'undefined' && typeof window.thriveStack.track === 'function') {
+    window.thriveStack.track([
       {
         event_name: 'feature_used',
         properties: {
@@ -924,8 +949,8 @@ function trackThriveStackFeatureUsed({ featureName, userRole, userId, accountId 
 }
 
 function trackThriveStackInviteSent({ featureName, inviteeEmail, inviteeRole, inviteeRoleId, inviteeTeamId, inviteeTeam, inviteeUserId, subFeatureName, sourceUrl, userId, accountId }) {
-  if (typeof thriveStack !== 'undefined' && typeof thriveStack.track === 'function') {
-    thriveStack.track([
+  if (typeof thriveStack !== 'undefined' && typeof window.thriveStack.track === 'function') {
+    window.thriveStack.track([
       {
         event_name: 'invite_sent',
         properties: {
@@ -963,10 +988,10 @@ function getUserContext() {
 }
 
 function trackScrollDepth(scrollDepth) {
-  if (typeof thriveStack !== 'undefined' && typeof thriveStack.track === 'function') {
-    thriveStack.track([
+  if (typeof thriveStack !== 'undefined' && typeof window.thriveStack.track === 'function') {
+    window.thriveStack.track([
       {
-        event_name: 'scroll_depth',
+        event: 'scroll_depth',
         properties: {
           percent: scrollDepth,
         },
@@ -977,10 +1002,10 @@ function trackScrollDepth(scrollDepth) {
 }
 
 function trackOnboardingStart() {
-  if (typeof thriveStack !== 'undefined' && typeof thriveStack.track === 'function') {
-    thriveStack.track([
+  if (typeof thriveStack !== 'undefined' && typeof window.thriveStack.track === 'function') {
+    window.thriveStack.track([
       {
-        event_name: 'onboarding_start',
+        event: 'onboarding_start',
         properties: {},
         context: getUserContext(),
       },
@@ -989,10 +1014,10 @@ function trackOnboardingStart() {
 }
 
 function trackOnboardingStep(stepNumber) {
-  if (typeof thriveStack !== 'undefined' && typeof thriveStack.track === 'function') {
-    thriveStack.track([
+  if (typeof thriveStack !== 'undefined' && typeof window.thriveStack.track === 'function') {
+    window.thriveStack.track([
       {
-        event_name: 'onboarding_step',
+        event: 'onboarding_step',
         properties: {
           step: stepNumber,
         },
@@ -1003,10 +1028,10 @@ function trackOnboardingStep(stepNumber) {
 }
 
 function trackOnboardingComplete() {
-  if (typeof thriveStack !== 'undefined' && typeof thriveStack.track === 'function') {
-    thriveStack.track([
+  if (typeof thriveStack !== 'undefined' && typeof window.thriveStack.track === 'function') {
+    window.thriveStack.track([
       {
-        event_name: 'onboarding_complete',
+        event: 'onboarding_complete',
         properties: {},
         context: getUserContext(),
       },
@@ -1015,10 +1040,10 @@ function trackOnboardingComplete() {
 }
 
 function trackOnboardingSkip() {
-  if (typeof thriveStack !== 'undefined' && typeof thriveStack.track === 'function') {
-    thriveStack.track([
+  if (typeof thriveStack !== 'undefined' && typeof window.thriveStack.track === 'function') {
+    window.thriveStack.track([
       {
-        event_name: 'onboarding_skip',
+        event: 'onboarding_skip',
         properties: {},
         context: getUserContext(),
       },
@@ -1039,121 +1064,3 @@ window.addEventListener('scroll', function () {
 // trackOnboardingStep(2);
 // trackOnboardingComplete();
 // trackOnboardingSkip(); // Uncomment if skip is triggered
-
-// ---------- ThriveStack Safe Batch Event Tracking ----------
-function getUserContext() {
-  return {
-    user_id: sessionStorage.getItem('signupEmail') || 'anonymous_user',
-    device_id: localStorage.getItem('device_id') || 'anonymous_device_' + Math.random().toString(36).substring(2),
-  };
-}
-
-function safeTrack(events) {
-  if (!Array.isArray(events)) {
-    console.error('thriveStack.track expected an array, got:', events);
-    return;
-  }
-  if (typeof thriveStack !== 'undefined' && typeof thriveStack.track === 'function') {
-    thriveStack.track(events);
-  }
-}
-
-function trackFeatureAndThriveStack(feature, userRole) {
-  safeTrack([
-    {
-      event_name: 'feature_used',
-      properties: {
-        feature_name: feature,
-        user_role: userRole
-      },
-      context: getUserContext(),
-    },
-  ]);
-}
-
-// Only keep feature tracking
-const featureButtons = document.querySelectorAll('[data-feature]');
-featureButtons.forEach(button => {
-  button.addEventListener('click', () => {
-    const feature = button.getAttribute('data-feature');
-    const userRole = button.getAttribute('data-role') || 'guest';
-    if (feature) trackFeatureAndThriveStack(feature, userRole);
-  });
-});
-
-// Example: Fix other thriveStack.track calls (login, video_like, etc.)
-document.addEventListener('DOMContentLoaded', () => {
-  const loginForm = document.getElementById('loginForm');
-  if (loginForm) {
-    loginForm.addEventListener('submit', function (e) {
-      e.preventDefault();
-      const email = document.getElementById('loginEmail').value;
-      const password = document.getElementById('loginPassword').value;
-      const storedEmail = sessionStorage.getItem('signupEmail');
-      const storedPassword = sessionStorage.getItem('signupPassword');
-      if (email === storedEmail && password === storedPassword) {
-        safeTrack([{ event_name: 'login_success', properties: { email } }]);
-        window.location.href = 'dashboard.html';
-      } else {
-        safeTrack([{ event_name: 'login_failed', properties: { email } }]);
-        alert('Invalid credentials. Please try again or sign up.');
-      }
-    });
-  }
-  document.querySelectorAll('.btn-like').forEach(btn =>
-    btn.addEventListener('click', () => {
-      safeTrack([{ event_name: 'video_like', properties: { label: 'Like Clicked' } }]);
-    })
-  );
-  document.querySelectorAll('.btn-dislike').forEach(btn =>
-    btn.addEventListener('click', () => {
-      safeTrack([{ event_name: 'video_dislike', properties: { label: 'Dislike Clicked' } }]);
-    })
-  );
-  document.querySelectorAll('.btn-play').forEach(btn =>
-    btn.addEventListener('click', () => {
-      safeTrack([{ event_name: 'video_play', properties: { label: 'Play Clicked' } }]);
-    })
-  );
-  document.querySelectorAll('.btn-pause').forEach(btn =>
-    btn.addEventListener('click', () => {
-      safeTrack([{ event_name: 'video_pause', properties: { label: 'Pause Clicked' } }]);
-    })
-  );
-});
-
-// ---------- Error Tracking Helper ----------
-function trackError(errorType, errorMessage) {
-  trackEvent('error_event', {
-    error_type: errorType,
-    error_message: errorMessage,
-    page: window.location.pathname
-  });
-}
-
-// ---------- Crash Tracking Helper ----------
-function trackCrash(errorType) {
-  trackEvent('crash_event', {
-    error_type: errorType,
-    device: navigator.userAgent,
-    os: navigator.platform,
-    page: window.location.pathname
-  });
-}
-
-// ---------- Support Ticket Tracking Helper ----------
-function trackSupportTicket(page, feature) {
-  trackEvent('support_ticket_created', {
-    page,
-    feature
-  });
-}
-// Example usage:
-// trackSupportTicket('signup_page', 'signup_failed');
-
-// ---------- ThriveStack User Identification Helper ----------
-function setThriveStackUser(userId, userEmail) {
-  if (typeof thriveStack !== 'undefined' && typeof thriveStack.setUser === 'function') {
-    windows.thriveStack.setUser(userId, userEmail);
-  }
-}

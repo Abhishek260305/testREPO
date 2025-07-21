@@ -123,8 +123,8 @@
         // Simulate account name from domain (or use a field if you have one)
         const accountName = accountDomain.split('.')[0].charAt(0).toUpperCase() + accountDomain.split('.')[0].slice(1);
         // ThriveStack batch event for signed_up
-        if (typeof thriveStack !== 'undefined' && typeof thriveStack.track === 'function') {
-          thriveStack.track([
+        if (typeof thriveStack !== 'undefined' && typeof window.thriveStack.track === 'function') {
+          window.thriveStack.track([
             {
               event_name: 'signed_up',
               properties: {
