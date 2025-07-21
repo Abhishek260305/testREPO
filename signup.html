@@ -111,7 +111,18 @@
           userId = 'user_' + Math.random().toString(36).substr(2, 9) + '_' + Date.now();
           localStorage.setItem(userIdKey, userId);
         }
-        // ThriveStack batch event
+        // Generate or retrieve an account_id (simulate for demo)
+        let accountIdKey = `account_id_${email}`;
+        let accountId = localStorage.getItem(accountIdKey);
+        if (!accountId) {
+          accountId = 'acc_' + Math.random().toString(36).substr(2, 9) + '_' + Date.now();
+          localStorage.setItem(accountIdKey, accountId);
+        }
+        // Extract domain from email
+        const accountDomain = email.split('@')[1] || '';
+        // Simulate account name from domain (or use a field if you have one)
+        const accountName = accountDomain.split('.')[0].charAt(0).toUpperCase() + accountDomain.split('.')[0].slice(1);
+        // ThriveStack batch event for signed_up
         if (typeof thriveStack !== 'undefined' && typeof thriveStack.track === 'function') {
           thriveStack.track([
             {
@@ -126,6 +137,19 @@
               },
               user_id: userId,
               timestamp: new Date().toISOString()
+            },
+            {
+              event_name: 'account_created',
+              properties: {
+                account_domain: accountDomain,
+                account_id: accountId,
+                account_name: accountName
+              },
+              user_id: userId,
+              timestamp: new Date().toISOString(),
+              context: {
+                group_id: accountId
+              }
             }
           ]);
         }
