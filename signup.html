@@ -57,7 +57,7 @@
   <script src="https://ts-script.app.thrivestack.ai/latest/thrivestack.js" 
     api-key="m9S/wwTPiv7egZcG7DeBdvlsW37YfHRMpstb3xh1S0g=" 
     source="marketing,product">
-</script>
+  </script>
 
 </head>
 
@@ -97,6 +97,8 @@
         e.preventDefault();
         const email = emailInput.value;
         const password = passwordInput.value;
+        const timestamp = new Date().toISOString();
+        const userId = crypto.randomUUID(); // Generate unique user ID
 
         // Track submission attempt
         if (typeof amplitude !== 'undefined') amplitude.logEvent('signup_submitted', { email });
@@ -113,10 +115,32 @@
         // Save to session storage
         sessionStorage.setItem('signupEmail', email);
         sessionStorage.setItem('signupPassword', password);
+        sessionStorage.setItem('userId', userId); // Store for future tracking
 
-        // Track success
+        // Track success with all analytics platforms
         if (typeof amplitude !== 'undefined') amplitude.logEvent('signup_success', { email });
         if (typeof mixpanel !== 'undefined') mixpanel.track('signup_success', { email });
+
+        // ThriveStack tracking
+        if (window.thriveStack?.track) {
+          try {
+            window.thriveStack.track([{
+              "event_name": "signed_up",
+              "properties": {
+                "user_email": email,
+                "user_name": email.split('@')[0], // Default to email prefix as name
+                "utm_campaign": "customer_success",
+                "utm_medium": "referral",
+                "utm_source": "twitter",
+                "utm_term": "free_trial"
+              },
+              "user_id": userId,
+              "timestamp": timestamp
+            }]);
+          } catch (e) {
+            console.error("ThriveStack tracking error:", e);
+          }
+        }
 
         alert('Signup successful! Please login.');
         window.location.href = 'index.html#show-onboarding';
