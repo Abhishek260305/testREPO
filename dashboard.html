@@ -311,7 +311,25 @@
           setThriveStackUser(userId, userEmail);
         }
       }
+
+      // Feature engagement tracking for play, pause, like, dislike buttons
+      const playBtn = document.querySelector('.btn-play');
+      if (playBtn) playBtn.addEventListener('click', () => trackFeatureAndThriveStack('play', 'user'));
+      const pauseBtn = document.querySelector('.btn-pause');
+      if (pauseBtn) pauseBtn.addEventListener('click', () => trackFeatureAndThriveStack('pause', 'user'));
+      const likeBtn = document.querySelector('.btn-like');
+      if (likeBtn) likeBtn.addEventListener('click', () => trackFeatureAndThriveStack('like', 'user'));
+      const dislikeBtn = document.querySelector('.btn-dislike');
+      if (dislikeBtn) dislikeBtn.addEventListener('click', () => trackFeatureAndThriveStack('dislike', 'user'));
     });
+
+    // Feature use
+    trackFeatureAndThriveStack('watch_trailer', 'user');
+    trackFeatureAndThriveStack('add_to_watchlist', 'user');
+    trackFeatureAndThriveStack('play', 'user');
+    trackFeatureAndThriveStack('pause', 'user');
+    trackFeatureAndThriveStack('like', 'user');
+    trackFeatureAndThriveStack('dislike', 'user');
   </script>
 </body>
 </html> 
