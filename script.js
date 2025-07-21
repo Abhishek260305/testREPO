@@ -96,6 +96,21 @@ window.addEventListener('scroll', () => {
       mixpanel.track('section_viewed', { section: current });
     }
     lastTrackedSection = current;
+    if (window.thriveStack?.track) {
+            window.thriveStack.track([{
+              event_name: "feature_used",
+              properties: {
+                feature_name: "scroll_depth",
+                scroll_percentage: threshold,
+                page: window.location.pathname
+              },
+              user_id: localStorage.getItem('userId') || 'anonymous',
+              timestamp: new Date().toISOString(),
+              context: {
+                group_id: localStorage.getItem('accountId') || 'unassigned'
+              }
+            }]);
+          }
   }
 });
 
@@ -158,6 +173,22 @@ document.querySelectorAll('.btn-like').forEach(btn =>
     if (typeof mixpanel !== 'undefined') {
       mixpanel.track('video_like', { label: 'Like Clicked' });
     }
+    if (window.thriveStack?.track) {
+      const videoId = btn.closest('.video-item')?.dataset.id || 'unknown';
+      window.thriveStack.track([{
+        event_name: "feature_used",
+        properties: {
+          feature_name: "content_like",
+          content_id: videoId,
+          content_type: "movie" // or "tv_show" if applicable
+        },
+        user_id: localStorage.getItem('userId') || 'anonymous',
+        timestamp: new Date().toISOString(),
+        context: {
+          group_id: localStorage.getItem('accountId') || 'unassigned'
+        }
+      }]);
+    }
   })
 );
 
@@ -174,6 +205,16 @@ document.querySelectorAll('.btn-dislike').forEach(btn =>
     }
     if (typeof mixpanel !== 'undefined') {
       mixpanel.track('video_dislike', { label: 'Dislike Clicked' });
+    }
+    if (window.thriveStack?.track) {
+      window.thriveStack.track([{
+        event_name: "feature_used",
+        properties: {
+          feature_name: "content_dislike",
+          content_id: btn.closest('.video-item')?.dataset.id || 'unknown'
+        },
+        // ... same user/account IDs as above ...
+      }]);
     }
   })
 );
@@ -192,6 +233,24 @@ document.querySelectorAll('.btn-play').forEach(btn =>
     if (typeof mixpanel !== 'undefined') {
       mixpanel.track('video_play', { label: 'Play Clicked' });
     }
+    if (window.thriveStack?.track) {
+      const userId = localStorage.getItem('userId') || 'anonymous';
+      const accountId = localStorage.getItem('accountId') || 'unassigned';
+      
+      window.thriveStack.track([{
+        event_name: "feature_used",
+        properties: {
+          feature_name: "video_play",
+          content_id: btn.closest('.video-container')?.dataset.videoId || 'unknown',
+          user_role: localStorage.getItem('userTier') || 'guest'
+        },
+        user_id: userId,
+        timestamp: new Date().toISOString(),
+        context: {
+          group_id: accountId
+        }
+      }]);
+    }
   })
 );
 
@@ -208,6 +267,20 @@ document.querySelectorAll('.btn-pause').forEach(btn =>
     }
     if (typeof mixpanel !== 'undefined') {
       mixpanel.track('video_pause', { label: 'Pause Clicked' });
+    }
+    if (window.thriveStack?.track) {
+      window.thriveStack.track([{
+        event_name: "feature_used",
+        properties: {
+          feature_name: "video_pause",
+          content_id: btn.closest('.video-container')?.dataset.videoId || 'unknown'
+        },
+        user_id: localStorage.getItem('userId') || 'anonymous',
+        timestamp: new Date().toISOString(),
+        context: {
+          group_id: localStorage.getItem('accountId') || 'unassigned'
+        }
+      }]);
     }
   })
 );
