@@ -671,73 +671,78 @@ window.addEventListener('scroll', () => {
     lastTrackedSection = current;
   }
 });
-// Login success/failure
-loginForm.addEventListener('submit', function (e) {
-  e.preventDefault();
-  const email = document.getElementById('loginEmail').value;
-  const password = document.getElementById('loginPassword').value;
-  const storedEmail = sessionStorage.getItem('signupEmail');
-  const storedPassword = sessionStorage.getItem('signupPassword');
+document.addEventListener('DOMContentLoaded', () => {
+  const loginForm = document.getElementById('loginForm'); // Ensure this ID exists in your HTML
 
-  if (email === storedEmail && password === storedPassword) {
-    // Track login success
-    if (typeof gtag === 'function') {
-      gtag('event', 'login_success', {
-        event_category: 'Authentication',
-        event_label: email
-      });
-    }
-    if (typeof amplitude !== 'undefined') {
-      amplitude.logEvent('login_success', { email });
-    }
-    if (typeof mixpanel !== 'undefined') {
-      mixpanel.track('login_success', { email });
-    }
-    if (typeof thriveStack !== 'undefined' && typeof thriveStack.track === 'function') {
-      thriveStack.track('login_success', { email });
-    }
-    window.location.href = 'dashboard.html';
-  } else {
-    // Track login failure
-    if (typeof gtag === 'function') {
-      gtag('event', 'login_failed', {
-        event_category: 'Authentication',
-        event_label: email
-      });
-    }
-    if (typeof amplitude !== 'undefined') {
-      amplitude.logEvent('login_failed', { email });
-    }
-    if (typeof mixpanel !== 'undefined') {
-      mixpanel.track('login_failed', { email });
-    }
-    if (typeof thriveStack !== 'undefined' && typeof thriveStack.track === 'function') {
-      thriveStack.track('login_failed', { email });
-    }
-    alert('Invalid credentials. Please try again or sign up.');
+  if (loginForm) {
+    loginForm.addEventListener('submit', function (e) {
+      e.preventDefault();
+      const email = document.getElementById('loginEmail').value;
+      const password = document.getElementById('loginPassword').value;
+      const storedEmail = sessionStorage.getItem('signupEmail');
+      const storedPassword = sessionStorage.getItem('signupPassword');
+
+      if (email === storedEmail && password === storedPassword) {
+        // Track login success
+        if (typeof gtag === 'function') {
+          gtag('event', 'login_success', {
+            event_category: 'Authentication',
+            event_label: email
+          });
+        }
+        if (typeof amplitude !== 'undefined') {
+          amplitude.logEvent('login_success', { email });
+        }
+        if (typeof mixpanel !== 'undefined') {
+          mixpanel.track('login_success', { email });
+        }
+        if (typeof thriveStack !== 'undefined' && typeof thriveStack.track === 'function') {
+          thriveStack.track([{ event: 'login_success', properties: { email } }]); // Batch format!
+        }
+        window.location.href = 'dashboard.html';
+      } else {
+        // Track login failure
+        if (typeof gtag === 'function') {
+          gtag('event', 'login_failed', {
+            event_category: 'Authentication',
+            event_label: email
+          });
+        }
+        if (typeof amplitude !== 'undefined') {
+          amplitude.logEvent('login_failed', { email });
+        }
+        if (typeof mixpanel !== 'undefined') {
+          mixpanel.track('login_failed', { email });
+        }
+        if (typeof thriveStack !== 'undefined' && typeof thriveStack.track === 'function') {
+          thriveStack.track([{ event: 'login_failed', properties: { email } }]); // Batch format!
+        }
+        alert('Invalid credentials. Please try again or sign up.');
+      }
+    });
   }
-});
-// Like/Dislike/Play/Pause
-document.querySelectorAll('.btn-like').forEach(btn =>
-  btn.addEventListener('click', () => {
-    if (typeof gtag === 'function') {
-      gtag('event', 'video_like', {
-        event_category: 'Video',
-        event_label: 'Like Clicked'
-      });
-    }
-    if (typeof amplitude !== 'undefined') {
-      amplitude.logEvent('video_like', { label: 'Like Clicked' });
-    }
-    if (typeof mixpanel !== 'undefined') {
-      mixpanel.track('video_like', { label: 'Like Clicked' });
-    }
-    if (typeof thriveStack !== 'undefined' && typeof thriveStack.track === 'function') {
-      thriveStack.track('video_like', { label: 'Like Clicked' });
-    }
-  })
-);
 
+  // Like/Dislike/Play/Pause
+  document.querySelectorAll('.btn-like').forEach(btn =>
+    btn.addEventListener('click', () => {
+      if (typeof gtag === 'function') {
+        gtag('event', 'video_like', {
+          event_category: 'Video',
+          event_label: 'Like Clicked'
+        });
+      }
+      if (typeof amplitude !== 'undefined') {
+        amplitude.logEvent('video_like', { label: 'Like Clicked' });
+      }
+      if (typeof mixpanel !== 'undefined') {
+        mixpanel.track('video_like', { label: 'Like Clicked' });
+      }
+      if (typeof thriveStack !== 'undefined' && typeof thriveStack.track === 'function') {
+        thriveStack.track([{ event: 'video_like', properties: { label: 'Like Clicked' } }]); // Batch format!
+      }
+    })
+  );
+});
 document.querySelectorAll('.btn-dislike').forEach(btn =>
   btn.addEventListener('click', () => {
     if (typeof gtag === 'function') {
